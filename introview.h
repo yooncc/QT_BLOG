@@ -10,12 +10,14 @@ class IntroView : public QWidget
 private:
     QPushButton *writeBtn;
     QPushButton *refreshBtn;
+
 public:
     explicit IntroView(QWidget *parent = nullptr);
     void initIntro();
     Util util;
 public slots:
     void startWrite();
+    void startRefresh();
 signals:
 };
 

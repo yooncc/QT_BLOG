@@ -1,12 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include <QDockWidget>
-#include <QToolBar>
 #include <QLabel>
-#include "util.h"
+#include <QMainWindow>
+#include <QToolBar>
 #include "introview.h"
+#include "util.h"
 
 class MainWindow : public QMainWindow
 {
@@ -19,7 +19,7 @@ private:
     QAction *loginAct;
     QAction *logoutAct;
     QAction *exitAct;
-    void initToolbar(int session);  // 세션있음 1 , 로그인필요 0
+    void initToolbar(int session); // 세션있음 1 , 로그인필요 0
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -33,6 +33,5 @@ public slots:
     void startLogin();
     void startLogout();
     void startExit();
-
 };
 #endif // MAINWINDOW_H

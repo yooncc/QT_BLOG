@@ -4,7 +4,6 @@ Util::Util(QObject *parent)
     : QObject{parent}
 {}
 
-
 QAction *Util::makeAction(
     QString icon, QString text, QString shortCut, QString toolTip, QObject *recv, const char *slot)
 {
