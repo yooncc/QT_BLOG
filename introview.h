@@ -2,7 +2,10 @@
 #define INTROVIEW_H
 
 #include <QWidget>
+#include <QGridLayout>
+#include <QScrollArea>
 #include "util.h"
+#include "postcell.h"
 
 class IntroView : public QWidget
 {
@@ -10,6 +13,9 @@ class IntroView : public QWidget
 private:
     QPushButton *writeBtn;
     QPushButton *refreshBtn;
+    PostCell *postCell;
+    QScrollArea* scrollArea;
+    QGridLayout *postGridLayout;
 
 public:
     explicit IntroView(QWidget *parent = nullptr);

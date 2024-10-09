@@ -73,4 +73,5 @@ void MainWindow::initMain()
 {
     intro = new IntroView(this);
     setCentralWidget(intro);
+    intro->initIntro();
 }
