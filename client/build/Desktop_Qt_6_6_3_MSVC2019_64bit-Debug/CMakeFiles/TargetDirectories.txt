@@ -1,0 +1,8 @@
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/fortuneclient.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/edit_cache.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/list_install_components.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/install.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/install/local.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/fortuneclient_autogen_timestamp_deps.dir
+C:/Qt/Examples/Qt-6.6.3/network/fortuneclient/build/Desktop_Qt_6_6_3_MSVC2019_64bit-Debug/CMakeFiles/fortuneclient_autogen.dir
