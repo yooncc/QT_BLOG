@@ -1,0 +1,25 @@
+{
+    "users": [
+        {
+            "id": "zedno15",
+            "name": "홍동의",
+            "nick": "zedno",
+            "pw": "1234",
+            "rank": 1
+        },
+        {
+            "id": "jonghun",
+            "name": "윤종헌",
+            "nick": "QT",
+            "pw": "4567",
+            "rank": 2
+        },
+        {
+            "id": "MinGW",
+            "name": "김민기",
+            "nick": "C++",
+            "pw": "mini15",
+            "rank": 2
+        }
+    ]
+}

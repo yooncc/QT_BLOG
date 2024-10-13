@@ -1,0 +1,16 @@
+{
+    "posts": [
+        {
+            "comments": [
+                {
+                    "nick": "C++",
+                    "text": "test3"
+                }
+            ],
+            "id": 0,
+            "nick": "zedno",
+            "text": "This is a first post.",
+            "title": "Hello"
+        }
+    ]
+}
