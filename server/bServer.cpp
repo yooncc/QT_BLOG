@@ -442,8 +442,21 @@ void* start(void* fdp)
             continue;
 
         std::string bflag(buf);
+        int flag = 0;
+
+        try {
+            flag = std::stoi(bflag);    
+        }  catch (const std::exception& expn) {
+            std::cout << expn.what() << "\n";
+            bServer.mySend(fd, "-3");
+            continue;
+        } catch (...) {
+            std::cout << ": Unknown error\n";
+            bServer.mySend(fd, "-3");
+            continue;
+        }
+
         bflag = bflag.substr(0, bflag.find(':'));
-        int flag = std::stoi(bflag);
         std::cout << flag << "\n";
 
         switch (flag)
@@ -635,6 +648,7 @@ void* start(void* fdp)
 
             default:
             {
+                bServer.mySend(fd, "-3");
                 return NULL;
             }
         }
