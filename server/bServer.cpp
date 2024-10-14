@@ -499,13 +499,21 @@ void* start(void* fdp)
 
             case 3:
             {
-                // buf = 3
+                // buf = 3:page
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 1, tokens);
+
                 json jf = bServer.readj(2);
-                for (auto x: jf["posts"])
-                {
-                    bServer.mySend(fd, to_string(x));
+
+                int st = std::stoi(tokens[0]) - 1;
+                std::string mesg;
+                for (int i = 20 * st; i < 20; i++)
+                {   
+                    if (jf["posts"][i] == nullptr)
+                        break;
+                    mesg += to_string(jf["posts"][i]) + "\n";
                 }
-                bServer.mySend(fd, "1");
+                bServer.mySend(fd, mesg);
                 break;
             }
 
