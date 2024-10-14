@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QPushButton>
 
 class PostCell : public QWidget
 {
@@ -20,8 +21,12 @@ private:
 public:
     explicit PostCell(QWidget *parent = nullptr);
     void initPost(QString imageUrl="",QString title="",QString contents="",QString date="",QString comment="",QString profile="",QString nick="",QString like="");
-
+    QPushButton *buttonGesture;
+public slots:
+    // void cellClicked();
 signals:
+
+
 };
 
 #endif // POSTCELL_H

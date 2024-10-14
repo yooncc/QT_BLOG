@@ -39,9 +39,22 @@ PostCell::PostCell(QWidget *parent)
     profileLabel->setGeometry(QRect(16,currentY,cellHeight*0.15,cellHeight*0.15));
     nickLabel->setGeometry(QRect(profileLabel->x()+profileLabel->width(),currentY,cellWidth/3,cellHeight*0.15));
     likeLabel->setGeometry(QRect(cellWidth-100,currentY,100,cellHeight*0.15));
+
+    buttonGesture = new QPushButton(this);
+
+    buttonGesture->setGeometry(QRect(0,0,cellWidth,cellHeight));
+    buttonGesture->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
+    // connect(buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));
 }
 
+// SLOT
+// void PostCell::cellClicked()
+// {
+//     qDebug("cellClicked");
+//     qDebug() << (this->parent())->
+// }
 
+// CUSTOM
 void PostCell::initPost(QString imageUrl,QString title,QString contents,QString date,QString comment,QString profile,QString nick,QString like)
 {
     this->imageLabel->setText(imageUrl);
