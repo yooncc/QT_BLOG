@@ -33,20 +33,48 @@ IntroView::IntroView(QWidget *parent)
 void IntroView::startWrite()
 {
     qDebug("startWrite");
+    initIntro();
 }
 
 void IntroView::startRefresh()
 {
     qDebug("startRefresh");
+    // 기존 위젯 모두 제거
+    QLayoutItem *child;
+    while ((child = postGridLayout->takeAt(0)) != nullptr) {
+        delete child->widget();  // 레이아웃에서 위젯을 제거하고 삭제
+        delete child;  // 레이아웃 아이템 삭제
+    }
+}
+
+void IntroView::cellClicked()
+{
+    qDebug("cellClicked");
+    ((MainWindow*)(this->parent()))->goToPost();
 }
 
 // CUSTOM
 void IntroView::initIntro()
 {
     qDebug("initIntro");
+    // 기존 위젯 모두 제거
+    QLayoutItem *child;
+    while ((child = postGridLayout->takeAt(0)) != nullptr) {
+        delete child->widget();  // 레이아웃에서 위젯을 제거하고 삭제
+        delete child;  // 레이아웃 아이템 삭제
+    }
+
+    // for (int i=0; i<10; i++) {
+    //     PostCell* postCell1 = new PostCell;
+    //     postCell1->setFixedSize(260,300);
+    //     postCell1->initPost("image1","title","contents","2024/10/9","12","profile","yooncc","99");
+    //     postGridLayout->addWidget(postCell1,0,0);
+    // }
+
     PostCell* postCell1 = new PostCell;
     postCell1->setFixedSize(260,300);
     postCell1->initPost("image1","title","contents","2024/10/9","12","profile","yooncc","99");
+    connect(postCell1->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));
     postGridLayout->addWidget(postCell1,0,0);
 
     PostCell* postCell2 = new PostCell;

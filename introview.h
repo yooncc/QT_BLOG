@@ -24,6 +24,7 @@ public:
 public slots:
     void startWrite();
     void startRefresh();
+    void cellClicked();
 signals:
 };
 

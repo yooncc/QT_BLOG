@@ -34,3 +34,8 @@ QPushButton *Util::makePushButton(QWidget *parent = nullptr,
 
     return newPushBtn;
 }
+
+void Util::showErrorMsg(QWidget *parent, QString errMsg)
+{
+    QMessageBox::question(parent, "에러 발생", errMsg, QMessageBox::Yes);
+}

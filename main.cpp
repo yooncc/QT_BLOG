@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-
+#include "client.h"
 #include <QApplication>
 #include <QScreen>
 
@@ -7,6 +7,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+
+    Client client;
+    client.connectToServer("192.168.0.47", 8001);
+    // 서버로 메시지 전송 (연결 후 전송하도록 지연)
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();

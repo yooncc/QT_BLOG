@@ -4,6 +4,7 @@
 #include <QAction>
 #include <QObject>
 #include <QPushButton>
+#include <QMessageBox>
 
 class Util : public QObject
 {
@@ -19,6 +20,7 @@ public:
                         const char *slot);
     QPushButton *makePushButton(
         QWidget *parent, QString name, QString fontName, int fontSize, bool isBold, QString icon);
+    void showErrorMsg(QWidget *parent, QString errMsg);
 
 signals:
 };
