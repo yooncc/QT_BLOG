@@ -1,15 +1,11 @@
 #include "mainwindow.h"
+#include "client.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     initToolbar(0);
 
-    // dockLabel = new QLabel("admin");
-    // dockLabel->setAlignment(Qt::AlignRight);
-    // dock = new QDockWidget(this);
-    // dock->setTitleBarWidget(dockLabel);
-    // addDockWidget(Qt::BottomDockWidgetArea, dock);
 }
 
 MainWindow::~MainWindow() {}
@@ -189,6 +185,8 @@ void MainWindow::initToolbar(int session)
 
 void MainWindow::initMain()
 {
+    qDebug() << "initMain";
+    qDebug() << client.postInfos.size();
     intro = new IntroView(this);
     setCentralWidget(intro);
     intro->initIntro();
@@ -196,7 +194,7 @@ void MainWindow::initMain()
 
 void MainWindow::goToPost()
 {
-    intro->close();
+    // intro->close();
     postView = new PostView(this);
     setCentralWidget(postView);
 

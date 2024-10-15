@@ -1,5 +1,7 @@
 #include "introview.h"
-#include "mainwindow.h"
+#include "client.h"
+
+// extern Client *client;
 
 IntroView::IntroView(QWidget *parent)
     : QWidget{parent}
@@ -33,7 +35,7 @@ IntroView::IntroView(QWidget *parent)
 void IntroView::startWrite()
 {
     qDebug("startWrite");
-    initIntro();
+    // initIntro();
 }
 
 void IntroView::startRefresh()
@@ -57,6 +59,7 @@ void IntroView::cellClicked()
 void IntroView::initIntro()
 {
     qDebug("initIntro");
+    qDebug() << client.postInfos.size();
     // 기존 위젯 모두 제거
     QLayoutItem *child;
     while ((child = postGridLayout->takeAt(0)) != nullptr) {
@@ -64,58 +67,18 @@ void IntroView::initIntro()
         delete child;  // 레이아웃 아이템 삭제
     }
 
-    // for (int i=0; i<10; i++) {
-    //     PostCell* postCell1 = new PostCell;
-    //     postCell1->setFixedSize(260,300);
-    //     postCell1->initPost("image1","title","contents","2024/10/9","12","profile","yooncc","99");
-    //     postGridLayout->addWidget(postCell1,0,0);
-    // }
+    int n,m=-1;
+    for (int i=0; i<client.postInfos.size();i++) {
+        n = i%4;
+        if (i%4==0)
+            m++;
+        PostCell* postCell = new PostCell;
+        postCell->setFixedSize(260,300);
 
-    PostCell* postCell1 = new PostCell;
-    postCell1->setFixedSize(260,300);
-    postCell1->initPost("image1","title","contents","2024/10/9","12","profile","yooncc","99");
-    connect(postCell1->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));
-    postGridLayout->addWidget(postCell1,0,0);
+        postCell->initPost("image1",client.postInfos[i]->title,client.postInfos[i]->contents,"2024/10/9","12","profile",client.postInfos[i]->nick,"99");
+        postGridLayout->addWidget(postCell,m,n);
+    }
 
-    PostCell* postCell2 = new PostCell;
-    postCell2->setFixedSize(260,300);
-    postCell2->initPost("image2","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell2,0,1);
-
-    PostCell* postCell3 = new PostCell;
-    postCell3->setFixedSize(260,300);
-    postCell3->initPost("image3","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell3,0,2);
-
-    PostCell* postCell4 = new PostCell;
-    postCell4->setFixedSize(260,300);
-    postCell4->initPost("image4","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell4,0,3);
-
-    PostCell* postCell5 = new PostCell;
-    postCell5->setFixedSize(260,300);
-    postCell5->initPost("image5","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell5,1,0);
-
-    PostCell* postCell6 = new PostCell;
-    postCell6->setFixedSize(260,300);
-    postCell6->initPost("image6","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell6,1,1);
-
-    PostCell* postCell7 = new PostCell;
-    postCell7->setFixedSize(260,300);
-    postCell7->initPost("image7","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell7,1,2);
-
-    PostCell* postCell8 = new PostCell;
-    postCell8->setFixedSize(260,300);
-    postCell8->initPost("image7","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell8,1,3);
-
-    PostCell* postCell9 = new PostCell;
-    postCell9->setFixedSize(260,300);
-    postCell9->initPost("image7","title","contents","2024/10/9","12","profile","yooncc","99");
-    postGridLayout->addWidget(postCell9,2,0);
 
 
 }
