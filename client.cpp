@@ -3,6 +3,8 @@
 #include <QString>
 #include <QDebug>
 
+Client client;
+
 Client::Client(QObject *parent)
     : QObject(parent), socket(new QTcpSocket(this))
 {
@@ -35,6 +37,7 @@ void Client::onConnected()
 {
     // 서버에 연결되었을 때 호출됨
     qDebug() << "Connected to server!";
+
 }
 
 void Client::setFlag(int num)
@@ -46,6 +49,27 @@ void Client::setFlag(int num)
 void Client::sendMessage(const QString &message)
 {
     socket->write(message.toUtf8());
+    QEventLoop loop;
+
+    // readyRead 시그널이 발생하면 이벤트 루프 종료
+    connect(socket, &QTcpSocket::readyRead, &loop, &QEventLoop::quit);
+
+    // 타이머를 설정하여 대기 시간이 너무 길지 않도록 함 (5초 대기)
+    QTimer timer;
+    timer.setSingleShot(true);
+    connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+    timer.start(5000);  // 타임아웃 시간 설정
+
+    // 응답 또는 타임아웃까지 대기
+    loop.exec();
+
+    // 데이터 수신 후 처리
+    if (socket->bytesAvailable()) {
+        QByteArray data = socket->readAll();
+        qDebug() << "Received response:" << data;
+    } else {
+        qDebug() << "No response received (timeout).";
+    }
 }
 
 
@@ -166,7 +190,13 @@ void Client::onReadyRead()
             postTable = std::move(parsedData);
             for(int i = 0; i < postTable.size(); i++)
             {
-                qDebug() << postTable[i];
+                QByteArray postData = postTable[i].toUtf8();
+                if (postData.isEmpty())
+                    continue;
+
+                Post_info* postInfo = jsonParsing.parsePost(postData);
+                postInfos.append(postInfo);
+                qDebug() << "clients " << postInfos.size();
             }
         }
         break;

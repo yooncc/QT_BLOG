@@ -4,6 +4,11 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QString>
+#include <QEventLoop>
+#include <QTimer>
+#include "jsonparsing.h"
+#include "post_info.h"
+#include "mainwindow.h"
 
 class Client : public QObject
 {
@@ -34,6 +39,8 @@ public:
     //     void modifycomment(Post post, Comment comment.idx, Comment comment.txt)
     //     void deleteComment(Post post, Comment comment.idx)
     //     void subMembership(Info info)
+    JsonParsing jsonParsing;
+    QList<Post_info*> postInfos;
 
 private slots:
     void onConnected();      // 서버에 연결되었을 때 호출
@@ -49,5 +56,7 @@ private:
     QString post;
     QTcpSocket *socket;  // TCP 소켓 객체
 };
+
+extern Client client;
 
 #endif // CLIENT_H

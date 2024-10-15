@@ -6,6 +6,7 @@
 #include <QScrollArea>
 #include "util.h"
 #include "postcell.h"
+#include "mainwindow.h"
 
 class IntroView : public QWidget
 {

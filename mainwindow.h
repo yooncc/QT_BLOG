@@ -13,6 +13,8 @@
 #include "postview.h"
 #include "util.h"
 
+class IntroView;  // 전방 선언 추가
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -33,9 +35,9 @@ public:
     void initMain();
     void goToPost();
     Util util;
-    IntroView *intro;
     PostView *postView;
     int toolbarHeight;
+    IntroView *intro;
 
 public slots:
     void startLogin();
