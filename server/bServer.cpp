@@ -2,7 +2,7 @@
 #include <sys/types.h> // socket
 #include <sys/socket.h> // socket
 #include <netinet/in.h> // sockaddr_in
-#include <string.h> // memset
+#include <cstring> // memset, strtok
 #include <fcntl.h> // fcntl
 #include <unistd.h> // close
 #include <vector>
@@ -39,6 +39,7 @@ public:
     void wclosej(int, std::ofstream &);
     int check(int);
     int check(int, std::string);
+    int bSearch(const json &, const int, int, int);
     // main func
     void mySend(int, std::string);
     int login(std::string, std::string);
@@ -50,6 +51,8 @@ public:
     int modifyC(std::string, std::string, std::string);
     int deleteC(std::string, std::string);
     void resign(int);
+    int download(const std::string);
+    int upload();
 
 };
 
@@ -236,15 +239,14 @@ void Server::wclosej(int select, std::ofstream &file)
 
 int Server::check(int value)
 {
-    int idx = 0;
     json jf = readj(2);
-    for (auto x: jf["posts"])
-    {
-        if (x["id"] == value)
-            return idx;
-        idx += 1;
-    }
-    return -1;
+
+    if (jf["posts"][0]["id"] == value)
+        return 0;
+    else if (jf["posts"][jf["posts"].size()-1]["id"] == value)
+        return jf["posts"].size()-1;
+
+    return bSearch(jf, value, 0, jf["posts"].size() - 1);
 }
 
 // 1:id, 2:nick
@@ -273,6 +275,29 @@ int Server::check(int select, std::string value)
         idx += 1;
     }
     return -1;
+}
+
+int Server::bSearch(const json &jf, const int value, int min, int max)
+{
+    if (min > max)
+        return -1;
+
+    int mid = (max + min) / 2;
+
+    int pivot = jf["posts"][mid]["id"];
+
+    if (pivot == value)
+        return mid;
+    else if (pivot < value)
+    {
+        return bSearch(jf, value, mid+1, max);
+    }
+    else if (pivot > value)
+    {
+        return bSearch(jf, value, min, mid-1);
+    }
+
+    return -3;
 }
 
 void Server::mySend(int fd, std::string text)
@@ -430,6 +455,11 @@ void Server::resign(int idx)
     wclosej(fnum, temp);
 }
 
+int Server::download(std::string fname)
+{
+    return 1;
+}
+
 void* start(void* fdp)
 {
     char buf[100];
@@ -455,8 +485,7 @@ void* start(void* fdp)
             bServer.mySend(fd, "-3");
             continue;
         }
-
-        bflag = bflag.substr(0, bflag.find(':'));
+        
         std::cout << flag << "\n";
 
         switch (flag)
@@ -507,7 +536,7 @@ void* start(void* fdp)
 
                 int st = std::stoi(tokens[0]) - 1;
                 std::string mesg;
-                for (int i = 20 * st; i < 20; i++)
+                for (int i = 10 * st; i < 10; i++)
                 {   
                     if (jf["posts"][i] == nullptr)
                         break;
@@ -651,6 +680,22 @@ void* start(void* fdp)
                     bServer.mySend(fd, "-1");
                 else if (result == -2)
                     bServer.mySend(fd, "-2");
+                break;
+            }
+
+            case 12:
+            {
+                // buf = 12:id:file name
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 2, tokens);
+                std::string temp = tokens[0] + "_" + tokens[1];
+
+                int result = bServer.download(temp);
+                if (result)
+                    bServer.mySend(fd, "1");
+                else
+                    bServer.mySend(fd, "0");
+                
                 break;
             }
 
