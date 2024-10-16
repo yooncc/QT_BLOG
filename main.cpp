@@ -19,6 +19,5 @@ int main(int argc, char *argv[])
     w.resize(screenWidth * 0.8, screenHeight * 0.8);
     w.show();
     w.initMain();
-
     return a.exec();
 }

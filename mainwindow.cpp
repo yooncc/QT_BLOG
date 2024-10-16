@@ -26,6 +26,7 @@ void MainWindow::startLogin()
     QLineEdit *idField = new QLineEdit(&dialog);
     form.addRow("ID", idField);
     QLineEdit *pwField = new QLineEdit(&dialog);
+    pwField->setEchoMode(QLineEdit::Password);
     form.addRow("PW", pwField);
     // QLineEdit *repwField = new QLineEdit(&dialog);
     // form.addRow("rePW", repwField);
@@ -37,35 +38,33 @@ void MainWindow::startLogin()
                                Qt::Horizontal,
                                &dialog);
     form.addRow(&buttonBox);
-    QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-    // Show the dialog as modal
-    if (dialog.exec() == QDialog::Accepted) {
-        // If the user didn't dismiss the dialog, do something with the fields
-        QLineEdit *idField = fields[0];
-        QLineEdit *pwField = fields[1];
-        // QLineEdit *repwField = fields[2];
-
-        if (idField->text() == "" || pwField->text() == "") {
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+        QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
+        QString pw = pwField->text();  // 여기에 실제 pw 값을 넣으세요
+        if (id == "" || pw == "") {
             util.showErrorMsg(this, "모든 항목을 채워주세요!");
+            id = "\n";
+            pw = "\n";
             return;
         }
-        // // 중복 아이디체크
-        // bool isExistID = util.findID("user_info.txt", idField->text());
-        // if (isExistID) {
-        //     util.showErrorMsg(this, "이미 존재하는 아이디입니다.");
-        //     return;
-        // }
-        // // 비밀번호 확인 체크
-        // if (pwField->text() == repwField->text()) {
-        //     util.writeFile("user_info.txt", idField->text() + ";" + pwField->text() + ":\n");
-        // } else {
-        //     util.showErrorMsg(this, "비밀번호를 확인해주세요.");
-        //     return;
-        // }
-        // 회원가입 성공
-    }
+        client.sendLogin(id, pw);
+        if(client.chkError() == -1)
+        {
+            util.showErrorMsg(this, "잘못된 아이디 입니다.");
+        }
+        else if (client.chkError() == -2)
+        {
+            util.showErrorMsg(this, " 잘못된 비밀번호 입니다.");
+        }
+        else
+        {
+            util.showErrorMsg(this, " 로그인  성공?~");
+            dialog.accept();
+        }
+
+    });
+    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    dialog.exec();
 }
 
 void MainWindow::startLogout()
@@ -87,9 +86,15 @@ void MainWindow::startSign()
     QList<QLineEdit *> fields;
     QLineEdit *idField = new QLineEdit(&dialog);
     form.addRow("ID", idField);
+    QLineEdit *nickField = new QLineEdit(&dialog);
+    form.addRow("Nickn", nickField);
+    QLineEdit *nameField = new QLineEdit(&dialog);
+    form.addRow("Name", nameField);
     QLineEdit *pwField = new QLineEdit(&dialog);
+    pwField->setEchoMode(QLineEdit::Password);
     form.addRow("PW", pwField);
     QLineEdit *repwField = new QLineEdit(&dialog);
+    repwField->setEchoMode(QLineEdit::Password);
     form.addRow("rePW", repwField);
     fields << idField << pwField << repwField;
 
@@ -97,36 +102,60 @@ void MainWindow::startSign()
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                Qt::Horizontal,
                                &dialog);
+    QPushButton *memberInButton = new QPushButton("Joint the membership", &dialog);
+    buttonBox.addButton(memberInButton, QDialogButtonBox::ActionRole);
     form.addRow(&buttonBox);
-    QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
-    // Show the dialog as modal
-    if (dialog.exec() == QDialog::Accepted) {
-        // If the user didn't dismiss the dialog, do something with the fields
-        QLineEdit *idField = fields[0];
-        QLineEdit *pwField = fields[1];
-        QLineEdit *repwField = fields[2];
-
-        if (idField->text() == "" || pwField->text() == "" || repwField->text() == "") {
-            util.showErrorMsg(this, "모든 항목을 채워주세요!");
+    QObject::connect(memberInButton, &QPushButton::clicked, [&]() {
+        // Apply 버튼을 눌렀을 때의 동작
+        QString id = idField->text();
+        QString pw = pwField->text();
+        if (id.isEmpty() || pw.isEmpty()) {
+            util.showErrorMsg(this, "항목을 채워주세요!");
             return;
         }
-        // // 중복 아이디체크
-        // bool isExistID = util.findID("user_info.txt", idField->text());
-        // if (isExistID) {
-        //     util.showErrorMsg(this, "이미 존재하는 아이디입니다.");
-        //     return;
-        // }
-        // // 비밀번호 확인 체크
-        // if (pwField->text() == repwField->text()) {
-        //     util.writeFile("user_info.txt", idField->text() + ";" + pwField->text() + ":\n");
-        // } else {
-        //     util.showErrorMsg(this, "비밀번호를 확인해주세요.");
-        //     return;
-        // }
-        // 회원가입 성공
-    }
+        client.subMembership(id, pw);
+        if(client.chkError() == -1){
+            util.showErrorMsg(this, "잘못된 아이디 입니다.");
+        }
+        else if(client.chkError() == -2){
+            util.showErrorMsg(this, "잘못된 비밀번호 입니다.");
+        }
+        else{
+            util.showErrorMsg(this , "회원탈퇴에 성공하였습니다.");
+        }
+    });
+
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+        QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
+        QString pw = pwField->text();  // 여기에 실제 pw 값을 넣으세요
+        QString name = nameField->text();
+        QString nickname = nickField->text();
+        QString repw = repwField->text();
+
+        if (id.isEmpty() || pw.isEmpty() || repw.isEmpty() || nickname.isEmpty() || name.isEmpty()) {
+            util.showErrorMsg(this, "항목을 채워주세요!");
+            return;
+        }
+        if (pw != repw)
+        {
+            util.showErrorMsg(this, "비밀번호가 일치하지 않습니다.");
+            return;
+        }
+        client.addMembership(id, name, nickname, pw);
+        if(client.chkError() == 0)
+        {
+            util.showErrorMsg(this, "잘못된 아이디 입니다.");
+        }
+        else
+        {
+            util.showErrorMsg(this, "회원 가입 성공.");
+            dialog.accept();
+        }
+
+    });
+    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    dialog.exec();
 }
 
 

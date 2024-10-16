@@ -1,5 +1,6 @@
 #include "jsonparsing.h"
 
+
 JsonParsing::JsonParsing(QObject *parent)
     : QObject{parent}
 {}
@@ -49,6 +50,27 @@ Post_info* JsonParsing::parsePost(const QByteArray& data) {
         qDebug() << "Invalid JSON data";
         return nullptr;
     }
+}
 
+Info JsonParsing::parseCliInfo(const QByteArray& data) {
+    // 1. QByteArray 데이터를 QJsonDocument로 변환
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
 
+    // 2. JSON이 유효한지 확인
+    if (!jsonDoc.isNull() && jsonDoc.isObject()) {
+        // 3. QJsonDocument에서 QJsonObject를 추출
+        QJsonObject jsonObj = jsonDoc.object();
+
+        // 4. 개별 필드 접근
+        Info info;
+        info.MemberId = jsonObj["id"].toString();
+        info.MemberName = jsonObj["name"].toString();
+        info.MemberNickName = jsonObj["nick"].toString();
+        info.MemberPw = jsonObj["pw"].toString();
+        info.rank = jsonObj["rank"].toInt();
+        return info;
+    } else {
+        qDebug() << "Invalid JSON data";
+        return info;
+    }
 }

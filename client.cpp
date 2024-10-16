@@ -3,6 +3,7 @@
 #include <QString>
 #include <QDebug>
 
+
 Client client;
 
 Client::Client(QObject *parent)
@@ -23,6 +24,11 @@ Client::~Client()
         socket->close();
         delete socket;
     }
+}
+
+int Client::chkError()
+{
+    return status;
 }
 
 void Client::connectToServer(const QString &host, quint16 port)
@@ -80,9 +86,9 @@ void Client::sendLogin(QString id, QString pw)
     sendMessage(result);
 }
 
-void Client::addMembership(QString id, QString nickName, QString pw)
+void Client::addMembership(QString id, QString name, QString nickName, QString pw)
 {
-    QString result = QString("%1:%2:%3").arg("2").arg(id).arg(pw);
+    QString result = QString("%1:%2:%3:%4:%5").arg("2").arg(id).arg(name).arg(nickName).arg(pw);
     setFlag(2);
     sendMessage(result);
 }
@@ -136,12 +142,13 @@ void Client::writePost(QString title, QString nickname, QString detail)
 //     sendMessage(result);
 // }
 
-// void Client::outMembership(Info info)
-// {
-//     QString result = QString("%1:%2:%3").arg("11").arg(info.MemberId).arg(info.MemberPw);
-//     setFlag(11);
-//     sendMessage(result);
-// }
+void Client::subMembership(QString id, QString pw)
+{
+    QString result = QString("%1:%2:%3").arg("11").arg(id).arg(pw);
+    setFlag(11);
+    qDebug() << result;
+    sendMessage(result);
+}
 
 
 
@@ -156,28 +163,27 @@ void Client::onReadyRead()
     bool ok = true;
     switch (flag) {
     case 1: // tryLogin
-        if (parsedData[0] == "-1") {
+        status = parsedData[0].toInt(&ok);
+        if (parsedData[0] == "-1" || parsedData[0] == "-2") {
             qDebug() << "ID Wrong!";
-            // IDWRONG SIG
-        } else if (parsedData[0] == "-2") {
-            qDebug() << "PW Wrong!";
-            // PWWRONG SIG
-        } else {
+        }
+
+        else {
+            JsonParsing resultParsedData;
+            resultParsedData.parseCliInfo(data);
+            client.cliInfo = resultParsedData;
             qDebug() << "login success!";
-            cliInfo.MemberId = parsedData[0];
-            cliInfo.MemberPw = parsedData[1];
-            cliInfo.MemberName = parsedData[2];
-            cliInfo.admin = parsedData[3].toInt(&ok);
         }
         break;
 
     case 2: // setMembership
-        if (parsedData[0] == "-1") {
-            qDebug() << "ID Overlap";
+        status = parsedData[0].toInt(&ok);
+        if (parsedData[0] == "0") {
+            qDebug() << "ID or nickname is Overlap";
             // 닉네임 중복
-        } else if (parsedData[0] == "-2") {
+        } else if (parsedData[0] == "1") {
             qDebug() << "your our member!!";
-            // 닉네임 중복
+            // 회원가입 성공
         } else {
             qDebug() << "membership error";
         }
@@ -259,15 +265,16 @@ void Client::onReadyRead()
     //     }
     //     break;
 
-    // case 11: // outMembership
-    //     if (parsedData[0] == "-1") {
-    //         qDebug() << "Id Wrong";
-    //     } else if (parsedData[0] == "-2") {
-    //         qDebug() << "Pw Wrong";
-    //     } else if (parsedData[0] == "0") {
-    //         qDebug() << "success_out";
-    //     }
-    //     break;
+    case 11: // outMembership
+        status = parsedData[0].toInt(&ok);
+        if (parsedData[0] == "-1") {
+            qDebug() << "Id Wrong";
+        } else if (parsedData[0] == "-2") {
+            qDebug() << "Pw Wrong";
+        } else if (parsedData[0] == "0") {
+            qDebug() << "success_out";
+        }
+        break;
 
     default:
         qDebug() << "Unknown flag value!";

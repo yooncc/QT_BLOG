@@ -9,6 +9,8 @@
 #include "jsonparsing.h"
 #include "post_info.h"
 #include "mainwindow.h"
+#include "jsonparsing.h"
+
 
 class Client : public QObject
 {
@@ -17,20 +19,19 @@ class Client : public QObject
 public:
     struct Info {
         QString MemberId;
-        QString MemberPw;
         QString MemberName;
-        int admin;
+        QString MemberNickName;
+        QString MemberPw;
+        int rank;
     };
-
-
     explicit Client(QObject *parent = nullptr);
     ~Client();
-
+    int chkError();
     void connectToServer(const QString &host, quint16 port); // 서버에 연결
     void sendMessage(const QString &message);
     void setFlag(int num);
     void sendLogin(QString id, QString pw);
-    void addMembership(QString id, QString nickName, QString pw);
+    void addMembership(QString id, QString name, QString nickName, QString pw);
     void postGet(QString postNum);
     void writePost(QString title, QString nickname, QString detail);
     // void modifyPost(Post post)
@@ -38,7 +39,7 @@ public:
     //     void writecomment(Post post, Comment comment.txt)
     //     void modifycomment(Post post, Comment comment.idx, Comment comment.txt)
     //     void deleteComment(Post post, Comment comment.idx)
-    //     void subMembership(Info info)
+    void subMembership(QString id, QString pw);
     JsonParsing jsonParsing;
     QList<Post_info*> postInfos;
 
@@ -55,6 +56,7 @@ private:
     QStringList postTable;
     QString post;
     QTcpSocket *socket;  // TCP 소켓 객체
+    int status;
 };
 
 extern Client client;
