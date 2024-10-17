@@ -41,6 +41,8 @@ void IntroView::startWrite()
 void IntroView::startRefresh()
 {
     qDebug("startRefresh");
+    client.setFlag(3);
+    client.sendMessage("3:1");
     // 기존 위젯 모두 제거
     QLayoutItem *child;
     while ((child = postGridLayout->takeAt(0)) != nullptr) {
