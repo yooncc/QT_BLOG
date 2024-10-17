@@ -36,7 +36,7 @@ public:
     //     void deleteComment(Post post, Comment comment.idx)
     void subMembership(QString id, QString pw);
     JsonParsing jsonParsing;
-    IntroView *intro;
+    // IntroView *intro;
     QList<Post_info*> postInfos;
 
 private slots:
@@ -44,7 +44,8 @@ private slots:
     void onReadyRead();      // 서버로부터 데이터 수신 시 호출
     void onDisconnected();   // 서버와 연결이 끊겼을 때 호출
     void onErrorOccurred(QAbstractSocket::SocketError socketError); // 에러 발생 시 호출
-
+signals:
+    void allPostgetFinished();
 private:
 
     int flag;

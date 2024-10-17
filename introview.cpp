@@ -1,11 +1,11 @@
 #include "introview.h"
 #include "client.h"
 
-// extern Client *client;
 
 IntroView::IntroView(QWidget *parent)
     : QWidget{parent}
 {
+    connect(&client, &Client::allPostgetFinished, this, &IntroView::setPost);
 
     int btnHeight = 30;
     int writeBtnY = parent->height() - (((MainWindow *) (this->parent()))->toolbarHeight)
@@ -55,14 +55,14 @@ void IntroView::cellClicked()
 void IntroView::initIntro()
 {
     qDebug("initIntro");
-    qDebug() << client.postInfos.size();
-    client.intro = this;
+    client.setFlag(3);
+    client.sendMessage("3");
 }
 
 void IntroView::setPost()
 {
     qDebug() << "setPost";
-
+    qDebug() << "-------------------------------------------";
     // 기존 위젯 모두 제거
     QLayoutItem *child;
     while ((child = postGridLayout->takeAt(0)) != nullptr) {

@@ -207,7 +207,7 @@ void Client::onReadyRead()
                 postInfos.append(postInfo);
                 qDebug() << "clients " << postInfos.size();
             }
-            this->intro->setPost();
+            emit allPostgetFinished();
         }
         break;
 

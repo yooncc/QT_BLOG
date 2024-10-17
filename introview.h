@@ -6,6 +6,7 @@
 #include <QScrollArea>
 #include "util.h"
 #include "postcell.h"
+#include "client.h"
 #include "mainwindow.h"
 
 class IntroView : public QWidget
@@ -21,9 +22,9 @@ private:
 public:
     explicit IntroView(QWidget *parent = nullptr);
     void initIntro();
-    void setPost();
     Util util;
 public slots:
+    void setPost();
     void startWrite();
     void startRefresh();
     void cellClicked();
