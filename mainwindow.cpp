@@ -37,10 +37,21 @@ void MainWindow::startLogin()
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                Qt::Horizontal,
                                &dialog);
+    QPushButton *memberInButton = new QPushButton("로그 아웃", &dialog);
+    buttonBox.addButton(memberInButton, QDialogButtonBox::ActionRole);
     form.addRow(&buttonBox);
+
+    QObject::connect(memberInButton, &QPushButton::clicked, [&]() {
+        // 로그 아웃 버튼을 눌렀을때
+        client.setLogout();
+        util.showErrorMsg(this, "로그 아웃 되었습니다!");
+        dialog.accept();
+    });
+
     QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
         QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
         QString pw = pwField->text();  // 여기에 실제 pw 값을 넣으세요
+
         if (id == "" || pw == "") {
             util.showErrorMsg(this, "모든 항목을 채워주세요!");
             id = "\n";
@@ -102,7 +113,7 @@ void MainWindow::startSign()
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                Qt::Horizontal,
                                &dialog);
-    QPushButton *memberInButton = new QPushButton("Joint the membership", &dialog);
+    QPushButton *memberInButton = new QPushButton("회원 탈퇴", &dialog);
     buttonBox.addButton(memberInButton, QDialogButtonBox::ActionRole);
     form.addRow(&buttonBox);
 
@@ -111,7 +122,7 @@ void MainWindow::startSign()
         QString id = idField->text();
         QString pw = pwField->text();
         if (id.isEmpty() || pw.isEmpty()) {
-            util.showErrorMsg(this, "항목을 채워주세요!");
+            util.showErrorMsg(this, "ID, PW 항목을 채워주세요!");
             return;
         }
         client.subMembership(id, pw);
@@ -123,6 +134,7 @@ void MainWindow::startSign()
         }
         else{
             util.showErrorMsg(this , "회원탈퇴에 성공하였습니다.");
+            dialog.accept();
         }
     });
 

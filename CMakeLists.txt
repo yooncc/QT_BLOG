@@ -31,6 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         postview.h postview.cpp
         jsonparsing.h jsonparsing.cpp
         post_info.h post_info.cpp
+        clieninfo.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QT_BLOG APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
