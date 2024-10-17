@@ -9,10 +9,12 @@
 #include <pthread.h>
 #include <fstream> // file
 #include <nlohmann/json.hpp> // json
+#include <filesystem>
 
 #define TCP_PORT 8001
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 class Server
 {
@@ -51,9 +53,8 @@ public:
     int modifyC(std::string, std::string, std::string);
     int deleteC(std::string, std::string);
     void resign(int);
+    int upload(const std::string);
     int download(const std::string);
-    int upload();
-
 };
 
 void* start(void* fdp);
@@ -85,6 +86,12 @@ Server::Server(int port): ssock(0), csock(0), clen(0), post_num(1)
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(TCP_PORT);
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    fs::path p("./files");
+    if (!fs::exists(p))
+    {
+        fs::create_directory("./files");
+    }
 }
 
 Server::~Server()
@@ -455,8 +462,51 @@ void Server::resign(int idx)
     wclosej(fnum, temp);
 }
 
-int Server::download(std::string fname)
+int Server::upload(std::string fname)
 {
+    std::string path = "./files/" + fname;
+    std::ofstream save(path, std::ios::binary);
+    
+    char buffer[1024] {};
+    while (1) 
+    {
+        int valread = recv(csock, buffer, 1024, 0);
+        std::string flag(buffer);
+        if (flag == "exit") break;
+        
+        save.write(buffer, valread);
+    
+        const char *response = "Message received";
+        send(csock, response, strlen(response), 0);
+        memset(buffer, 0, sizeof(buffer));
+    }
+    save.close();
+    
+    return 1;
+}
+
+int Server::download(const std::string fname)
+{  
+    std::string path = "./files/" + fname;
+    std::ifstream load(path, std::ios::binary);
+
+    const int SIZE = 1024;
+    char buffer[SIZE];
+    char message[SIZE];
+    while (1)
+    {
+        load.read(message, SIZE);
+        if (load.gcount() <= 0) break;
+
+        send(csock, message, load.gcount(), 0);
+        recv(csock, buffer, SIZE, 0);
+
+        memset(buffer, 0, sizeof(buffer)); // 버퍼 초기화
+        memset(message, 0, sizeof(message));
+    }
+    load.close();
+    send(csock, "exit", strlen("exit"), 0);
+    
     return 1;
 }
 
@@ -690,12 +740,26 @@ void* start(void* fdp)
                 bServer.buftok(buf, 2, tokens);
                 std::string temp = tokens[0] + "_" + tokens[1];
 
+                int result = bServer.upload(temp);
+                if (result)
+                    bServer.mySend(fd, "1");
+                else
+                    bServer.mySend(fd, "0");
+                break;
+            }
+
+            case 13:
+            {
+                // buf = 13:id:file name
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 2, tokens);
+                std::string temp = tokens[0] + "_" + tokens[1];
+
                 int result = bServer.download(temp);
                 if (result)
                     bServer.mySend(fd, "1");
                 else
                     bServer.mySend(fd, "0");
-                
                 break;
             }
 
@@ -707,4 +771,3 @@ void* start(void* fdp)
         }
     }
 }
-
