@@ -6,6 +6,7 @@
 #include <fcntl.h> // fcntl
 #include <unistd.h> // close
 #include <vector>
+#include <set>
 #include <pthread.h>
 #include <fstream> // file
 #include <nlohmann/json.hpp> // json
@@ -27,6 +28,7 @@ private:
     pthread_rwlock_t userlock;
     pthread_rwlock_t postlock;
     int post_num;
+    std::set<std::string> ids;
 
 public:
     Server(int port = 8001);
@@ -55,6 +57,7 @@ public:
     void resign(int);
     int upload(const std::string);
     int download(const std::string);
+    int logout(const std::string);
 };
 
 void* start(void* fdp);
@@ -314,20 +317,31 @@ void Server::mySend(int fd, std::string text)
 
 int Server::login(std::string id, std::string pw)
 {
-    int id_flag = 0, pw_flag = 0;
+    int id_flag = 0, pw_flag = 0, id_dup = 1;
     json jf = readj(1);
 
     int idx = check(1, id);
     if (idx != -1)
     {
+        std::string name(jf["users"][idx]["id"]);
+
+        if (ids.find(name) != ids.end())
+        {
+            id_dup = 0;
+            std::cout << "duplicated!\n";
+        }
+
         id_flag = 1;
         if (jf["users"][idx]["pw"] == pw)
         {
             pw_flag = 1;
+            ids.insert(name);
         }
     }
 
-    if (id_flag == 0)
+    if (id_dup == 0)
+        return -3;
+    else if (id_flag == 0)
         return -1;
     else if (pw_flag == 0)
         return -2;
@@ -510,6 +524,17 @@ int Server::download(const std::string fname)
     return 1;
 }
 
+int Server::logout(const std::string id)
+{
+    if (ids.find(id) == ids.end())
+        return 0;
+    else
+    {
+        ids.erase(id);
+        return 1;
+    }
+}
+
 void* start(void* fdp)
 {
     char buf[100];
@@ -556,6 +581,8 @@ void* start(void* fdp)
                     bServer.mySend(fd, "-1");
                 else if (result == -2) // 비밀번호 틀림
                     bServer.mySend(fd, "-2");
+                else if (result == -3) // 중복 로그인
+                    bServer.mySend(fd, "-3");
                 break;
             }
 
@@ -578,19 +605,23 @@ void* start(void* fdp)
 
             case 3:
             {
-                // buf = 3:page
+                // buf = 3
                 std::vector<std::string> tokens;
-                bServer.buftok(buf, 1, tokens);
+                // bServer.buftok(buf, 1, tokens);
 
                 json jf = bServer.readj(2);
 
-                int st = std::stoi(tokens[0]) - 1;
+                // int st = std::stoi(tokens[0]) - 1;
                 std::string mesg;
-                for (int i = 10 * st; i < 10; i++)
+                // for (int i = 10 * st; i < 10; i++)
+                // {   
+                //     if (jf["posts"][i] == nullptr)
+                //         break;
+                //     mesg += to_string(jf["posts"][i]) + "\n";
+                // }
+                for (auto x: jf["posts"])
                 {   
-                    if (jf["posts"][i] == nullptr)
-                        break;
-                    mesg += to_string(jf["posts"][i]) + "\n";
+                    mesg += to_string(x) + "\n";
                 }
                 bServer.mySend(fd, mesg);
                 break;
@@ -763,9 +794,23 @@ void* start(void* fdp)
                 break;
             }
 
+            case 14:
+            {
+                // buf = 1:id
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 1, tokens);
+                int result = bServer.logout(tokens[0]);
+
+                if (result == 1)
+                    bServer.mySend(fd, "1");
+                else if (result == 0)
+                    bServer.mySend(fd, "0");
+                break;
+            }
+
             default:
             {
-                bServer.mySend(fd, "-3");
+                bServer.mySend(fd, "over the switchbow");
                 return NULL;
             }
         }
