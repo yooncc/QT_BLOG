@@ -6,14 +6,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include "post_info.h"
-#include "client.h"
-struct Info {
-    QString MemberId;
-    QString MemberName;
-    QString MemberNickName;
-    QString MemberPw;
-    int rank;
-};
+#include "clieninfo.h"
+
 class JsonParsing : public QObject
 {
     Q_OBJECT

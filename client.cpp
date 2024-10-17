@@ -151,7 +151,10 @@ void Client::subMembership(QString id, QString pw)
 }
 
 
-
+void Client::setLogout()
+{
+    client.cliInfo = {"", "", "", "", 0};
+}
 
 
 void Client::onReadyRead()
@@ -169,10 +172,10 @@ void Client::onReadyRead()
         }
 
         else {
-            JsonParsing resultParsedData;
-            resultParsedData.parseCliInfo(data);
-            client.cliInfo = resultParsedData;
             qDebug() << "login success!";
+            JsonParsing jsondata;
+            Info parseData = jsondata.parseCliInfo(data);
+            client.cliInfo = parseData;
         }
         break;
 
