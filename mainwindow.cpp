@@ -231,10 +231,20 @@ void MainWindow::initMain()
     intro->initIntro();
 }
 
-void MainWindow::goToPost()
+void MainWindow::goToPost(int index)
 {
-    // intro->close();
+    intro->close();
     postView = new PostView(this);
+    postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
     setCentralWidget(postView);
+
+}
+
+void MainWindow::goToWrite()
+{
+    intro->close();
+    writeView = new WriteView(this);
+    // postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
+    setCentralWidget(writeView);
 
 }
