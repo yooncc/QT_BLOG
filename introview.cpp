@@ -42,13 +42,7 @@ void IntroView::startRefresh()
 {
     qDebug("startRefresh");
     client.setFlag(3);
-    client.sendMessage("3:1");
-    // 기존 위젯 모두 제거
-    QLayoutItem *child;
-    while ((child = postGridLayout->takeAt(0)) != nullptr) {
-        delete child->widget();  // 레이아웃에서 위젯을 제거하고 삭제
-        delete child;  // 레이아웃 아이템 삭제
-    }
+    client.sendMessage("3");
 }
 
 void IntroView::cellClicked()
@@ -62,6 +56,13 @@ void IntroView::initIntro()
 {
     qDebug("initIntro");
     qDebug() << client.postInfos.size();
+    client.intro = this;
+}
+
+void IntroView::setPost()
+{
+    qDebug() << "setPost";
+
     // 기존 위젯 모두 제거
     QLayoutItem *child;
     while ((child = postGridLayout->takeAt(0)) != nullptr) {
@@ -80,7 +81,5 @@ void IntroView::initIntro()
         postCell->initPost("image1",client.postInfos[i]->title,client.postInfos[i]->contents,"2024/10/9","12","profile",client.postInfos[i]->nick,"99");
         postGridLayout->addWidget(postCell,m,n);
     }
-
-
 
 }

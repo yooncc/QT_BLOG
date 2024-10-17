@@ -36,7 +36,7 @@ void Client::connectToServer(const QString &host, quint16 port)
     // 서버 IP와 포트로 연결 시도
     socket->connectToHost(QHostAddress(host), port);
     setFlag(3);
-    sendMessage("3:1");
+    sendMessage("3");
 }
 
 void Client::onConnected()
@@ -191,12 +191,12 @@ void Client::onReadyRead()
             qDebug() << "membership error";
         }
         break;
-
     case 3: // allpostGet
         if (parsedData[0] == "0") {
             qDebug() << "AllpostGet error";
         } else {
             postTable = std::move(parsedData);
+            postInfos.clear();
             for(int i = 0; i < postTable.size(); i++)
             {
                 QByteArray postData = postTable[i].toUtf8();
@@ -207,6 +207,7 @@ void Client::onReadyRead()
                 postInfos.append(postInfo);
                 qDebug() << "clients " << postInfos.size();
             }
+            this->intro->setPost();
         }
         break;
 

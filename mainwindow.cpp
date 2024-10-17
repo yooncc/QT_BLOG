@@ -4,6 +4,36 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    toolBar = new QToolBar("toolbar", this);
+    addToolBar(toolBar);
+    toolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    this->toolbarHeight = this->toolBar->height();
+
+    loginAct = util.makeAction("",
+                               "로그인(L)",
+                               "Ctrl+L",
+                               "로그인을 시작합니다.",
+                               this,
+                               SLOT(startLogin()));
+    logoutAct = util.makeAction("",
+                                "로그아웃(L)",
+                                "Ctrl+L",
+                                "로그아웃합니다.",
+                                this,
+                                SLOT(startLogout()));
+    signAct = util.makeAction("",
+                              "회원가입(S)",
+                              "Ctrl+S",
+                              "회원가입합니다.",
+                              this,
+                              SLOT(startSign()));
+    exitAct = util.makeAction("",
+                              "종료(Q)",
+                              "Ctrl+Q",
+                              "회원을 새롭게 추가합니다.",
+                              this,
+                              SLOT(startExit()));
+
     initToolbar(0);
 
 }
@@ -37,16 +67,7 @@ void MainWindow::startLogin()
     QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
                                Qt::Horizontal,
                                &dialog);
-    QPushButton *memberInButton = new QPushButton("로그 아웃", &dialog);
-    buttonBox.addButton(memberInButton, QDialogButtonBox::ActionRole);
     form.addRow(&buttonBox);
-
-    QObject::connect(memberInButton, &QPushButton::clicked, [&]() {
-        // 로그 아웃 버튼을 눌렀을때
-        client.setLogout();
-        util.showErrorMsg(this, "로그 아웃 되었습니다!");
-        dialog.accept();
-    });
 
     QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
         QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
@@ -71,6 +92,7 @@ void MainWindow::startLogin()
         {
             util.showErrorMsg(this, " 로그인  성공?~");
             dialog.accept();
+            initToolbar(1);
         }
 
     });
@@ -81,6 +103,9 @@ void MainWindow::startLogin()
 void MainWindow::startLogout()
 {
     qDebug("startLogout");
+    client.setLogout();
+    initToolbar(0);
+    util.showErrorMsg(this, "로그 아웃 되었습니다!");
 }
 
 void MainWindow::startSign()
@@ -181,35 +206,8 @@ void MainWindow::startExit()
 
 void MainWindow::initToolbar(int session)
 {
-    toolBar = new QToolBar("toolbar", this);
-    addToolBar(toolBar);
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    this->toolbarHeight = this->toolBar->height();
-
-    loginAct = util.makeAction("",
-                               "로그인(L)",
-                               "Ctrl+L",
-                               "로그인을 시작합니다.",
-                               this,
-                               SLOT(startLogin()));
-    logoutAct = util.makeAction("",
-                                "로그아웃(L)",
-                                "Ctrl+L",
-                                "로그아웃합니다.",
-                                this,
-                                SLOT(startLogout()));
-    signAct = util.makeAction("",
-                                "회원가입(S)",
-                                "Ctrl+S",
-                                "회원가입합니다.",
-                                this,
-                                SLOT(startSign()));
-    exitAct = util.makeAction("",
-                              "종료(Q)",
-                              "Ctrl+Q",
-                              "회원을 새롭게 추가합니다.",
-                              this,
-                              SLOT(startExit()));
+    toolBar->clear();
+    qDebug() << client.cliInfo.MemberId;
 
     if (session == 1) {
         toolBar->addAction(logoutAct);

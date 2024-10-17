@@ -21,6 +21,7 @@ private:
 public:
     explicit IntroView(QWidget *parent = nullptr);
     void initIntro();
+    void setPost();
     Util util;
 public slots:
     void startWrite();

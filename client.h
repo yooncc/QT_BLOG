@@ -10,6 +10,8 @@
 #include "post_info.h"
 #include "mainwindow.h"
 
+#include "introview.h"
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -34,7 +36,7 @@ public:
     //     void deleteComment(Post post, Comment comment.idx)
     void subMembership(QString id, QString pw);
     JsonParsing jsonParsing;
-
+    IntroView *intro;
     QList<Post_info*> postInfos;
 
 private slots:
