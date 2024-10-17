@@ -11,9 +11,12 @@
 #include <QDialogButtonBox>
 #include "introview.h"
 #include "postview.h"
+#include "writeview.h"
 #include "util.h"
 
 class IntroView;  // 전방 선언 추가
+class PostView;  // 전방 선언 추가
+class WriteView;    // 전방 선언 추가
 
 class MainWindow : public QMainWindow
 {
@@ -33,9 +36,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void initMain();
-    void goToPost();
+    void goToPost(int index);
+    void goToWrite();
     Util util;
     PostView *postView;
+    WriteView *writeView;
     int toolbarHeight;
     IntroView *intro;
 

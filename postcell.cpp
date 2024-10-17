@@ -7,7 +7,7 @@ PostCell::PostCell(QWidget *parent)
 
     QLabel* backgroundLabel = new QLabel(this);
     backgroundLabel->setGeometry(QRect(0,0,cellWidth,cellHeight));
-    backgroundLabel->setStyleSheet("background-color: lightblue;");
+    backgroundLabel->setStyleSheet("background-color: white; border-radius: 7px;");
 
     imageLabel = new QLabel(this);
     titleLabel = new QLabel(this);
@@ -24,20 +24,35 @@ PostCell::PostCell(QWidget *parent)
     currentY += imageLabel->height();
 
     titleLabel->setGeometry(QRect(0,currentY,cellWidth,cellHeight*0.1));
-    titleLabel->setStyleSheet("background-color: white; color: black;");
+    titleLabel->setStyleSheet("color: black; font-weight: bold; font-size: 16px;");
+    titleLabel->setAlignment(Qt::AlignCenter);  // 텍스트 가운데 정렬
     currentY += titleLabel->height();
 
-    contentsLabel->setGeometry(QRect(0,currentY,cellWidth,cellHeight*0.3));
-    contentsLabel->setStyleSheet("background-color: white; color: black;");
+    contentsLabel->setGeometry(QRect(8,currentY,cellWidth-16,cellHeight*0.3));
+    contentsLabel->setStyleSheet("color: black; font-size: 12px;");
     currentY += contentsLabel->height();
 
-    dateLabel->setGeometry(QRect(0,currentY,cellWidth/2,cellHeight*0.1));
-    commentLabel->setGeometry(QRect(dateLabel->x()+dateLabel->width(),currentY,cellWidth/2,cellHeight*0.1));
+    QLabel* border1 = new QLabel(this);
+    border1->setGeometry(QRect(0,currentY,cellWidth,1));
+    border1->setStyleSheet("background-color: lightgray;");
+
+    dateLabel->setGeometry(QRect(8,currentY,cellWidth/2-8,cellHeight*0.1));
+    dateLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    commentLabel->setGeometry(QRect(dateLabel->x()+dateLabel->width(),currentY,cellWidth/2-8,cellHeight*0.1));
+    commentLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     currentY += dateLabel->height();
 
-    profileLabel->setGeometry(QRect(16,currentY,cellHeight*0.15,cellHeight*0.15));
-    nickLabel->setGeometry(QRect(profileLabel->x()+profileLabel->width(),currentY,cellWidth/3,cellHeight*0.15));
+    QLabel* border2 = new QLabel(this);
+    border2->setGeometry(QRect(0,currentY,cellWidth,1));
+    border2->setStyleSheet("background-color: lightgray;");
+
+    profileLabel->setGeometry(QRect(8,currentY,cellHeight*0.15,cellHeight*0.15));
+    // profileLabel->setStyleSheet("border: 1px solid black;");
+
+    nickLabel->setGeometry(QRect(profileLabel->x()+profileLabel->width()+4,currentY,cellWidth/3,cellHeight*0.15));
+    nickLabel->setStyleSheet("color: black; font-weight: bold; font-size: 13px;");
+
     likeLabel->setGeometry(QRect(cellWidth-100,currentY,100,cellHeight*0.15));
 
     buttonGesture = new QPushButton(this);
@@ -51,7 +66,7 @@ PostCell::PostCell(QWidget *parent)
 // void PostCell::cellClicked()
 // {
 //     qDebug("cellClicked");
-//     qDebug() << (this->parent())->
+//     // qDebug() << (this->parent())->
 // }
 
 // CUSTOM
@@ -61,8 +76,17 @@ void PostCell::initPost(QString imageUrl,QString title,QString contents,QString 
     this->titleLabel->setText(title);
     this->contentsLabel->setText(contents);
     this->dateLabel->setText(date);
-    this->commentLabel->setText(comment);
-    this->profileLabel->setText(profile);
+    QString cmtStr = "댓글 ";
+    cmtStr.append(comment);
+    this->commentLabel->setText(cmtStr);
+
+    // this->profileLabel->setText(profile);
+    QPixmap pixmap(profile);
+    if (pixmap.isNull()) {
+        pixmap = QPixmap(":/lion.jpg");
+    }
+    profileLabel->setPixmap(pixmap.scaled(profileLabel->size(), Qt::KeepAspectRatio));
+
     this->nickLabel->setText(nick);
-    this->likeLabel->setText(like);
+    // this->likeLabel->setText(like);
 }

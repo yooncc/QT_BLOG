@@ -27,7 +27,7 @@ public slots:
     void setPost();
     void startWrite();
     void startRefresh();
-    void cellClicked();
+    void cellClicked(int index);
 signals:
 };
 

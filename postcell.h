@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
+#include <QPixmap>
 
 class PostCell : public QWidget
 {

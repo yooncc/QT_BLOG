@@ -35,6 +35,7 @@ IntroView::IntroView(QWidget *parent)
 void IntroView::startWrite()
 {
     qDebug("startWrite");
+    ((MainWindow*)(this->parent()))->goToWrite();
     // initIntro();
 }
 
@@ -45,10 +46,10 @@ void IntroView::startRefresh()
     client.sendMessage("3");
 }
 
-void IntroView::cellClicked()
+void IntroView::cellClicked(int index)
 {
     qDebug("cellClicked");
-    ((MainWindow*)(this->parent()))->goToPost();
+    ((MainWindow*)(this->parent()))->goToPost(index);
 }
 
 // CUSTOM
@@ -77,6 +78,11 @@ void IntroView::setPost()
             m++;
         PostCell* postCell = new PostCell;
         postCell->setFixedSize(260,300);
+
+        // connect(postCell->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));
+        connect(postCell->buttonGesture, &QPushButton::clicked, this, [=]() {
+            cellClicked(i);  // i를 인자로 전달
+        });
 
         postCell->initPost("image1",client.postInfos[i]->title,client.postInfos[i]->contents,"2024/10/9","12","profile",client.postInfos[i]->nick,"99");
         postGridLayout->addWidget(postCell,m,n);
