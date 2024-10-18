@@ -102,45 +102,46 @@ void Client::postGet(QString postNum)
 
 void Client::writePost(QString title, QString nickname, QString detail)
 {
-    QString result = QString("%1:%2:%3").arg("5").arg(nickname).arg(detail);
+    QString result = QString("%1:%2:%3").arg("5").arg(title).arg(nickname).arg(detail);
     setFlag(5);
     sendMessage(result);
 }
 
-// void Client::modifyPost(Post post)
-// {
-//     QString result = QString("%1:%2:%3").arg("6").arg().arg(detail);
-//     setFlag(6);
-//     sendMessage(result);
-// }
+void Client::modifyPost(Post_info post)
+{
+    QString result = QString("%1:%2:%3").arg("6").arg(post.title).arg(post.contents);
+    setFlag(6);
+    sendMessage(result);
+}
 
-// void Client::deletePost(Post post)
-// {
-//     QString result = QString("%1:%2:%3").arg("7").arg(nickname).arg(detail);
-//     setFlag(7);
-//     sendMessage(result);
-// }
+void Client::deletePost(Post_info post)
+{
+    QString id = QString::number(post.id);
+    QString result = QString("%1:%2").arg("7").arg(id);
+    setFlag(7);
+    sendMessage(result);
+}
 
-// void Client::writecomment(Post post, Comment comment.txt)
-// {
-//     QString result = QString("%1:%2:%3").arg("8").arg(nickname).arg(detail);
-//     setFlag(8);
-//     sendMessage(result);
-// }
+void Client::writecomment(comment com)
+{
+    QString result = QString("%1:%2:%3").arg("8").arg(nickname).arg(detail);
+    setFlag(8);
+    sendMessage(result);
+}
 
-// void Client::modifycomment(Post post, Comment comment.idx, Comment comment.txt)
-// {
-//     QString result = QString("%1:%2:%3").arg("9").arg(nickname).arg(detail);
-//     setFlag(9);
-//     sendMessage(result);
-// }
+void Client::modifycomment(Post_info post, comment com)
+{
+    QString result = QString("%1:%2:%3:%4").arg("9").arg(nowPost.id).arg(com.idx).arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
+    setFlag(9);
+    sendMessage(result);
+}
 
-// void Client::deleteComment(Post post, Comment comment.idx)
-// {
-//     QString result = QString("%1:%2:%3").arg("10").arg(nickname).arg(detail);
-//     setFlag(10);
-//     sendMessage(result);
-// }
+void Client::deleteComment(comment com)
+{
+    QString result = QString("%1:%2:%3").arg("10").arg(nowPost.id).arg(com.idx);
+    setFlag(10);
+    sendMessage(result);
+}
 
 void Client::subMembership(QString id, QString pw)
 {
@@ -149,6 +150,24 @@ void Client::subMembership(QString id, QString pw)
     qDebug() << result;
     sendMessage(result);
 }
+
+void Client::uploadFile(QString fileName)
+{
+    QString result = QString("%1:%2:%3").arg("12").arg(nowPost.id).arg(fileName);
+    setFlag(12);
+    qDebug() << result;
+    sendMessage(result);
+}
+
+
+void Client::downLoadFile(QString fileName)
+{
+    QString result = QString("%1:%2:%3").arg("13").arg(nowPost.id).arg(fileName);
+    setFlag(13);
+    qDebug() << result;
+    sendMessage(result);
+}
+
 
 
 void Client::setLogout()
@@ -219,55 +238,55 @@ void Client::onReadyRead()
         }
         break;
 
-    // case 5: // WritePost
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "WritePost error";
-    //     } else if (parsedData[0] == "1") {
-    //         bool ok = true;
-    //         int id = parsedData[0].toInt(&ok); // ??? id 어디에 쓸지??
-    //         // 추가 처리가 필요할 수 있습니다.
-    //     }
-    //     break;
+    case 5: // WritePost
+        if (parsedData[0] == "0") {
+            qDebug() << "WritePost error";
+        } else if (parsedData[0] == "1") {
+            bool ok = true;
+            int id = parsedData[0].toInt(&ok); // ??? id 어디에 쓸지??
+            // 추가 처리가 필요할 수 있습니다.
+        }
+        break;
 
-    // case 6: // modifyPost
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "modifyPost error";
-    //     } else if (parsedData[0] == "1") {
-    //         qDebug() << "modifyPost success";
-    //     }
-    //     break;
+    case 6: // modifyPost
+        if (parsedData[0] == "0") {
+            qDebug() << "modifyPost error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "modifyPost success";
+        }
+        break;
 
-    // case 7: // deletePost
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "deletePost error";
-    //     } else if (parsedData[0] == "1") {
-    //         qDebug() << "deletePost success";
-    //     }
-    //     break;
+    case 7: // deletePost
+        if (parsedData[0] == "0") {
+            qDebug() << "deletePost error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "deletePost success";
+        }
+        break;
 
-    // case 8: // Writecomment
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "error";
-    //     } else if (parsedData[0] == "1") {
-    //         qDebug() << "success";
-    //     }
-    //     break;
+    case 8: // Writecomment
+        if (parsedData[0] == "0") {
+            qDebug() << "error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "success";
+        }
+        break;
 
-    // case 9: // modifycomment
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "error";
-    //     } else if (parsedData[0] == "1") {
-    //         qDebug() << "success";
-    //     }
-    //     break;
+    case 9: // modifycomment
+        if (parsedData[0] == "0") {
+            qDebug() << "error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "success";
+        }
+        break;
 
-    // case 10: // deleteComment
-    //     if (parsedData[0] == "0") {
-    //         qDebug() << "error";
-    //     } else if (parsedData[0] == "1") {
-    //         qDebug() << "success";
-    //     }
-    //     break;
+    case 10: // deleteComment
+        if (parsedData[0] == "0") {
+            qDebug() << "error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "success";
+        }
+        break;
 
     case 11: // outMembership
         status = parsedData[0].toInt(&ok);
@@ -277,6 +296,20 @@ void Client::onReadyRead()
             qDebug() << "Pw Wrong";
         } else if (parsedData[0] == "0") {
             qDebug() << "success_out";
+        }
+        break;
+    case 12: // fileUpload
+        if (parsedData[0] == "0") {
+            qDebug() << "UPLoad error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "UpLoads uccess";
+        }
+        break;
+    case 13: // fileDownload
+        if (parsedData[0] == "0") {
+            qDebug() << "filedown error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "filedown success";
         }
         break;
 
@@ -297,4 +330,18 @@ void Client::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
     // 소켓에서 에러가 발생했을 때 처리
     qDebug() << "Socket error:" << socket->errorString();
+}
+
+Post_info Client::getNowPostInfo()
+{
+    return nowPost;
+}
+
+void Client::setNowPostInfo(int id, QString nick, QString title, QString contents, QString<comment> *comments)
+{
+    this->nowPost.id = id;
+    this->nowPost.nick = nick;
+    this->nowPost.title = title;
+    this->nowPost.contents = contents;
+    this->nowPost.comments = comments;
 }

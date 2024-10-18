@@ -5,6 +5,7 @@
 #include <QString>
 #include <QList>
 #include <QJsonArray>
+#include "comment.h"
 
 
 
@@ -13,12 +14,6 @@ class Post_info : public QObject
     Q_OBJECT
 public:
     explicit Post_info(QObject *parent = nullptr);
-
-    struct comment {
-        QString nick;
-        QString contents;
-    };
-
     int id;
     QString nick;
     QString title;

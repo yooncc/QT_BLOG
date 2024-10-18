@@ -9,8 +9,9 @@
 #include "jsonparsing.h"
 #include "post_info.h"
 #include "mainwindow.h"
-
+#include "post_info.h"
 #include "introview.h"
+#include "comment.h"
 
 class Client : public QObject
 {
@@ -29,15 +30,20 @@ public:
     void postGet(QString postNum);
     void writePost(QString title, QString nickname, QString detail);
     void setLogout();
-    // void modifyPost(Post post)
-    //     void deletePost(Post post)
-    //     void writecomment(Post post, Comment comment.txt)
-    //     void modifycomment(Post post, Comment comment.idx, Comment comment.txt)
-    //     void deleteComment(Post post, Comment comment.idx)
+    void modifyPost(Post_info post);
+    void deletePost(Post_info post);
+    void writecomment(comment com);
+    void modifycomment(Post_info post, comment com);
+    void deleteComment(Post_info post, comment com);
     void subMembership(QString id, QString pw);
+    void
+
+    Post_info getNowPostInfo();
+    void setNowPostInfo();
     JsonParsing jsonParsing;
     // IntroView *intro;
     QList<Post_info*> postInfos;
+
 
 private slots:
     void onConnected();      // 서버에 연결되었을 때 호출
@@ -54,6 +60,7 @@ private:
     QString post;
     QTcpSocket *socket;  // TCP 소켓 객체
     int status;
+    Post_info nowPost;
 };
 
 extern Client client;

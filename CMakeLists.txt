@@ -34,6 +34,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         clieninfo.h
         resource/resourceFile.qrc
         writeview.h writeview.cpp
+        comment.h
 
     )
 # Define target properties for Android with Qt 6 as:
