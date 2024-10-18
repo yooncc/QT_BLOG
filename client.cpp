@@ -95,7 +95,7 @@ void Client::addMembership(QString id, QString name, QString nickName, QString p
 
 void Client::postGet(QString postNum)
 {
-    QString result = QString("%1:%2").arg("3").arg(postNum);
+    QString result = QString("%1:%2").arg("4").arg(postNum);
     setFlag(4);
     sendMessage(result);
 }
@@ -122,23 +122,23 @@ void Client::deletePost(Post_info post)
     sendMessage(result);
 }
 
-void Client::writecomment(comment com)
+void Client::writeComment(comment com)
 {
-    QString result = QString("%1:%2:%3").arg("8").arg(nickname).arg(detail);
+    QString result = QString("%1:%2:%3").arg("8").arg(cliInfo.MemberNickName).arg(com.contents);
     setFlag(8);
     sendMessage(result);
 }
 
-void Client::modifycomment(Post_info post, comment com)
+void Client::modifyComment(Post_info post, comment com)
 {
-    QString result = QString("%1:%2:%3:%4").arg("9").arg(nowPost.id).arg(com.idx).arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
+    QString result = QString("%1:%2:%3:%4").arg("9").arg(nowPost->id).arg(com.idx).arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
     setFlag(9);
     sendMessage(result);
 }
 
 void Client::deleteComment(comment com)
 {
-    QString result = QString("%1:%2:%3").arg("10").arg(nowPost.id).arg(com.idx);
+    QString result = QString("%1:%2:%3").arg("10").arg(nowPost->id).arg(com.idx);
     setFlag(10);
     sendMessage(result);
 }
@@ -153,7 +153,7 @@ void Client::subMembership(QString id, QString pw)
 
 void Client::uploadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("12").arg(nowPost.id).arg(fileName);
+    QString result = QString("%1:%2:%3").arg("12").arg(nowPost->id).arg(fileName);
     setFlag(12);
     qDebug() << result;
     sendMessage(result);
@@ -162,7 +162,7 @@ void Client::uploadFile(QString fileName)
 
 void Client::downLoadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("13").arg(nowPost.id).arg(fileName);
+    QString result = QString("%1:%2:%3").arg("13").arg(nowPost->id).arg(fileName);
     setFlag(13);
     qDebug() << result;
     sendMessage(result);
@@ -332,16 +332,14 @@ void Client::onErrorOccurred(QAbstractSocket::SocketError socketError)
     qDebug() << "Socket error:" << socket->errorString();
 }
 
-Post_info Client::getNowPostInfo()
+Post_info* Client::getNowPostInfo()
 {
     return nowPost;
 }
 
-void Client::setNowPostInfo(int id, QString nick, QString title, QString contents, QString<comment> *comments)
+void Client::setNowPostInfo(int id)
 {
-    this->nowPost.id = id;
-    this->nowPost.nick = nick;
-    this->nowPost.title = title;
-    this->nowPost.contents = contents;
-    this->nowPost.comments = comments;
+    this->nowPost->id = id;
+
 }
+

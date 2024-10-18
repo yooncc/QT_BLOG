@@ -23,23 +23,27 @@ public:
     ~Client();
     int chkError();
     void connectToServer(const QString &host, quint16 port); // 서버에 연결
-    void sendMessage(const QString &message);
-    void setFlag(int num);
-    void sendLogin(QString id, QString pw);
+    void setFlag(int num); // 비동기식 통신의 Flag 설정
+    void sendMessage(const QString &message); // 메시지 전송
+    void sendLogin(QString id, QString pw); // 로그인시 로그인정보
     void addMembership(QString id, QString name, QString nickName, QString pw);
     void postGet(QString postNum);
-    void writePost(QString title, QString nickname, QString detail);
     void setLogout();
+    void writePost(QString title, QString nickname, QString detail);
     void modifyPost(Post_info post);
     void deletePost(Post_info post);
-    void writecomment(comment com);
-    void modifycomment(Post_info post, comment com);
-    void deleteComment(Post_info post, comment com);
+    void writeComment(comment com);
+    void modifyComment(Post_info post, comment com);
+    void deleteComment(comment com);
     void subMembership(QString id, QString pw);
-    void
+    void uploadFile(QString fileName);
+    void downLoadFile(QString fileName);
+    void setNowPostInfo(int id);
 
-    Post_info getNowPostInfo();
+    Post_info* getNowPostInfo();
     void setNowPostInfo();
+
+
     JsonParsing jsonParsing;
     // IntroView *intro;
     QList<Post_info*> postInfos;
@@ -60,7 +64,7 @@ private:
     QString post;
     QTcpSocket *socket;  // TCP 소켓 객체
     int status;
-    Post_info nowPost;
+    Post_info *nowPost;
 };
 
 extern Client client;
