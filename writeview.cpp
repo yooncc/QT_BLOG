@@ -43,6 +43,7 @@ void WriteView::writeAct()
         util.showErrorMsg(this,"모든 항목을 채워주세요!");
         return;
     }
+    client.writePost(titleEdit->text(), contentEdit->toPlainText());
     qDebug() << titleEdit->text();
     qDebug() << contentEdit->toPlainText();
     ((MainWindow*)(this->parent()))->initMain();

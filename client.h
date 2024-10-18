@@ -28,8 +28,7 @@ public:
     void sendLogin(QString id, QString pw); // 로그인시 로그인정보
     void addMembership(QString id, QString name, QString nickName, QString pw);
     void postGet(QString postNum);
-    void setLogout();
-    void writePost(QString title, QString nickname, QString detail);
+    void writePost(QString title, QString detail);
     void modifyPost(Post_info post);
     void deletePost(Post_info post);
     void writeComment(comment com);
@@ -38,6 +37,7 @@ public:
     void subMembership(QString id, QString pw);
     void uploadFile(QString fileName);
     void downLoadFile(QString fileName);
+    void sendLogout();
     void setNowPostInfo(int id);
 
     Post_info* getNowPostInfo();

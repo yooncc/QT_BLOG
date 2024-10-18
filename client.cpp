@@ -100,9 +100,9 @@ void Client::postGet(QString postNum)
     sendMessage(result);
 }
 
-void Client::writePost(QString title, QString nickname, QString detail)
+void Client::writePost(QString title, QString detail)
 {
-    QString result = QString("%1:%2:%3").arg("5").arg(title).arg(nickname).arg(detail);
+    QString result = QString("%1:%2:%3:%4").arg("5").arg(title).arg(client.cliInfo.MemberNickName).arg(detail);
     setFlag(5);
     sendMessage(result);
 }
@@ -168,12 +168,16 @@ void Client::downLoadFile(QString fileName)
     sendMessage(result);
 }
 
-
-
-void Client::setLogout()
+void Client::sendLogout()
 {
+    QString result = QString("%1:%2:%3").arg("14").arg(cliInfo.MemberId).arg(cliInfo.MemberPw);
     client.cliInfo = {"", "", "", "", 0};
+    setFlag(14);
+    qDebug() << result;
+    sendMessage(result);
 }
+
+
 
 
 void Client::onReadyRead()
@@ -310,6 +314,13 @@ void Client::onReadyRead()
             qDebug() << "filedown error";
         } else if (parsedData[0] == "1") {
             qDebug() << "filedown success";
+        }
+        break;
+    case 14: // sendLogout
+        if (parsedData[0] == "0") {
+            qDebug() << "Logout error";
+        } else if (parsedData[0] == "1") {
+            qDebug() << "Logout success";
         }
         break;
 

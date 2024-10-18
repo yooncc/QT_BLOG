@@ -31,6 +31,11 @@ void PostView::cmtAct()
     ((MainWindow*)(this->parent()))->initMain();
 }
 
+// void PostView::Download()
+// {
+//     client.downLoadFile();
+// }
+
 void PostView::postviewInit(QString title, QString nick, QString date, QString image, QString contents, int id) {
 
     this->postId = id;
@@ -58,6 +63,11 @@ void PostView::postviewInit(QString title, QString nick, QString date, QString i
     nickLabel->adjustSize();
     // nickLabel->setGeometry(QRect(8,offsetY,width/2-8,20));
     nickLabel->setGeometry(QRect(8,offsetY,nickLabel->width(),nickLabel->height()));
+
+    // 다운로드 버튼
+    // downLoadBtn = util.makePushButton(scrollWidget, "다운로드", 11, false, "");
+    // downLoadBtn->setGeometry((QRect(8,offsetY+4,50,20));
+    // connect(cmtBtn, SIGNAL(clicked()), this, SLOT(Download()));
 
     dateLabel = new QLabel(scrollWidget);
     dateLabel->setText(date);
@@ -94,6 +104,8 @@ void PostView::postviewInit(QString title, QString nick, QString date, QString i
     cmtBtn = util.makePushButton(scrollWidget, "입력", "", 11, false, "");
     cmtBtn->setGeometry((QRect(commentEdit->x()+commentEdit->width()+8,offsetY,50,50)));
     connect(cmtBtn, SIGNAL(clicked()), this, SLOT(cmtAct()));
+
+
 
     offsetY += cmtBtn->height() + 16;
 

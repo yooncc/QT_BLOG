@@ -103,7 +103,7 @@ void MainWindow::startLogin()
 void MainWindow::startLogout()
 {
     qDebug("startLogout");
-    client.setLogout();
+    client.sendLogout();
     initToolbar(0);
     util.showErrorMsg(this, "로그 아웃 되었습니다!");
 }
@@ -198,6 +198,7 @@ void MainWindow::startSign()
 
 void MainWindow::startExit()
 {
+    client.sendLogout();
     qDebug("startExit");
     exit(0);
 }
@@ -233,6 +234,11 @@ void MainWindow::initMain()
 
 void MainWindow::goToPost(int index)
 {
+    if(client.cliInfo.rank < 1)
+    {
+        util.showErrorMsg(this, "권환이 없습니다.");
+        return;
+    }
     intro->close();
     postView = new PostView(this);
     postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
@@ -242,6 +248,11 @@ void MainWindow::goToPost(int index)
 
 void MainWindow::goToWrite()
 {
+    if(client.cliInfo.rank < 1)
+    {
+        util.showErrorMsg(this, "권환이 없습니다.");
+        return;
+    }
     intro->close();
     writeView = new WriteView(this);
     // postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);

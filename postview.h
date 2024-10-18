@@ -32,6 +32,7 @@ public:
 public slots:
     void backAct();
     void cmtAct();
+    // void Download();
 signals:
 };
 
