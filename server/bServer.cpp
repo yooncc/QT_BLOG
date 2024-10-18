@@ -11,6 +11,7 @@
 #include <fstream> // file
 #include <nlohmann/json.hpp> // json
 #include <filesystem>
+#include <time.h> // time
 
 #define TCP_PORT 8001
 
@@ -365,7 +366,19 @@ int Server::signUp(std::string id, std::string name, std::string nick, std::stri
 int Server::createP(std::string title, std::string nick, std::string text)
 {
     json jf = readj(2);
-    jf["posts"].push_back(json::object({ {"id", post_num}, {"title", title}, {"nick", nick}, {"text", text}}));
+    
+    // make time
+    time_t rawtime;
+    struct tm *tm;
+    char ctime[30] {};
+
+    time(&rawtime);
+    tm = localtime(&rawtime);
+    strftime(ctime, sizeof(ctime), "%Y. %m. %d. %H:%M:%S", tm);
+    std::string current_time(ctime);
+    // 
+
+    jf["posts"].push_back(json::object({ {"id", post_num}, {"title", title}, {"nick", nick}, {"text", text}, {"time", current_time}}));
     jf["posts"][post_num]["comments"] = json::array();
 
     int fnum = 2;
