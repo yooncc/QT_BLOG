@@ -2,9 +2,9 @@
 #define UTIL_H
 
 #include <QAction>
+#include <QMessageBox>
 #include <QObject>
 #include <QPushButton>
-#include <QMessageBox>
 
 class Util : public QObject
 {

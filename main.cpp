@@ -1,6 +1,6 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <QScreen>
+#include "mainwindow.h"
 
 #include "client.h"
 

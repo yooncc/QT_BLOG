@@ -1,13 +1,13 @@
 #ifndef INTROVIEW_H
 #define INTROVIEW_H
 
-#include <QWidget>
 #include <QGridLayout>
 #include <QScrollArea>
-#include "util.h"
-#include "postcell.h"
+#include <QWidget>
 #include "client.h"
 #include "mainwindow.h"
+#include "postcell.h"
+#include "util.h"
 
 class IntroView : public QWidget
 {
@@ -16,7 +16,7 @@ private:
     QPushButton *writeBtn;
     QPushButton *refreshBtn;
     PostCell *postCell;
-    QScrollArea* scrollArea;
+    QScrollArea *scrollArea;
     QGridLayout *postGridLayout;
 
 public:

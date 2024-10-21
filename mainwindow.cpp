@@ -21,12 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
                                 "로그아웃합니다.",
                                 this,
                                 SLOT(startLogout()));
-    signAct = util.makeAction("",
-                              "회원가입(S)",
-                              "Ctrl+S",
-                              "회원가입합니다.",
-                              this,
-                              SLOT(startSign()));
+    signAct
+        = util.makeAction("", "회원가입(S)", "Ctrl+S", "회원가입합니다.", this, SLOT(startSign()));
     exitAct = util.makeAction("",
                               "종료(Q)",
                               "Ctrl+Q",
@@ -35,10 +31,11 @@ MainWindow::MainWindow(QWidget *parent)
                               SLOT(startExit()));
 
     initToolbar(0);
-
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+    client.sendLogout();
+}
 
 // SLOT FUNCTION
 void MainWindow::startLogin()
@@ -70,8 +67,8 @@ void MainWindow::startLogin()
     form.addRow(&buttonBox);
 
     QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
-        QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
-        QString pw = pwField->text();  // 여기에 실제 pw 값을 넣으세요
+        QString id = idField->text(); // 여기에 실제 id 값을 넣으세요
+        QString pw = pwField->text(); // 여기에 실제 pw 값을 넣으세요
 
         if (id == "" || pw == "") {
             util.showErrorMsg(this, "모든 항목을 채워주세요!");
@@ -80,21 +77,15 @@ void MainWindow::startLogin()
             return;
         }
         client.sendLogin(id, pw);
-        if(client.chkError() == -1)
-        {
+        if (client.chkError() == -1) {
             util.showErrorMsg(this, "잘못된 아이디 입니다.");
-        }
-        else if (client.chkError() == -2)
-        {
+        } else if (client.chkError() == -2) {
             util.showErrorMsg(this, " 잘못된 비밀번호 입니다.");
-        }
-        else
-        {
+        } else {
             util.showErrorMsg(this, " 로그인  성공?~");
             dialog.accept();
             initToolbar(1);
         }
-
     });
     QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
     dialog.exec();
@@ -151,21 +142,19 @@ void MainWindow::startSign()
             return;
         }
         client.subMembership(id, pw);
-        if(client.chkError() == -1){
+        if (client.chkError() == -1) {
             util.showErrorMsg(this, "잘못된 아이디 입니다.");
-        }
-        else if(client.chkError() == -2){
+        } else if (client.chkError() == -2) {
             util.showErrorMsg(this, "잘못된 비밀번호 입니다.");
-        }
-        else{
-            util.showErrorMsg(this , "회원탈퇴에 성공하였습니다.");
+        } else {
+            util.showErrorMsg(this, "회원탈퇴에 성공하였습니다.");
             dialog.accept();
         }
     });
 
     QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
-        QString id = idField->text();  // 여기에 실제 id 값을 넣으세요
-        QString pw = pwField->text();  // 여기에 실제 pw 값을 넣으세요
+        QString id = idField->text(); // 여기에 실제 id 값을 넣으세요
+        QString pw = pwField->text(); // 여기에 실제 pw 값을 넣으세요
         QString name = nameField->text();
         QString nickname = nickField->text();
         QString repw = repwField->text();
@@ -174,27 +163,21 @@ void MainWindow::startSign()
             util.showErrorMsg(this, "항목을 채워주세요!");
             return;
         }
-        if (pw != repw)
-        {
+        if (pw != repw) {
             util.showErrorMsg(this, "비밀번호가 일치하지 않습니다.");
             return;
         }
         client.addMembership(id, name, nickname, pw);
-        if(client.chkError() == 0)
-        {
+        if (client.chkError() == 0) {
             util.showErrorMsg(this, "잘못된 아이디 입니다.");
-        }
-        else
-        {
+        } else {
             util.showErrorMsg(this, "회원 가입 성공.");
             dialog.accept();
         }
-
     });
     QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
     dialog.exec();
 }
-
 
 void MainWindow::startExit()
 {
@@ -234,28 +217,29 @@ void MainWindow::initMain()
 
 void MainWindow::goToPost(int index)
 {
-    if(client.cliInfo.rank < 1)
-    {
-        util.showErrorMsg(this, "권환이 없습니다.");
-        return;
-    }
+    // if (client.cliInfo.rank < 1) {
+    //     util.showErrorMsg(this, "권한이 없습니다.");
+    //     return;
+    // }
     intro->close();
     postView = new PostView(this);
-    postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
+    postView->postviewInit(client.postInfos[index]->title,
+                           client.postInfos[index]->nick,
+                           client.postInfos[index]->rtime,
+                           "image2",
+                           client.postInfos[index]->contents,
+                           client.postInfos[index]->id);
     setCentralWidget(postView);
-
 }
 
 void MainWindow::goToWrite()
 {
-    if(client.cliInfo.rank < 1)
-    {
-        util.showErrorMsg(this, "권환이 없습니다.");
-        return;
-    }
+    // if (client.cliInfo.rank < 1) {
+    //     util.showErrorMsg(this, "권한이 없습니다.");
+    //     return;
+    // }
     intro->close();
     writeView = new WriteView(this);
     // postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
     setCentralWidget(writeView);
-
 }

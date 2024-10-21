@@ -1,13 +1,11 @@
 #ifndef POST_INFO_H
 #define POST_INFO_H
 
+#include <QJsonArray>
+#include <QList>
 #include <QObject>
 #include <QString>
-#include <QList>
-#include <QJsonArray>
 #include "comment.h"
-
-
 
 class Post_info : public QObject
 {
@@ -18,8 +16,10 @@ public:
     QString nick;
     QString title;
     QString contents;
+    QString rtime;
     QList<comment> *comments;
-    void initPost(int id,QString nick,QString title, QString contents,QJsonArray cmtArr);
+    bool commentExist;
+    void initPost(int id, QString nick, QString title, QString contents, QString rtime);
 
 signals:
 };

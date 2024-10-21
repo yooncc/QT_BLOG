@@ -3,7 +3,8 @@
 
 #endif // CLIENINFO_H
 
-struct Info {
+struct Info
+{
     QString MemberId;
     QString MemberName;
     QString MemberNickName;

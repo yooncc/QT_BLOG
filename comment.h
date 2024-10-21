@@ -1,8 +1,8 @@
 #ifndef COMMENT_H
 #define COMMENT_H
 
-struct comment {
-
+struct comment
+{
     int idx;
     QString nick;
     QString contents;
