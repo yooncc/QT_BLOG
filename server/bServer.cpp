@@ -2,17 +2,21 @@
 #include <sys/types.h> // socket
 #include <sys/socket.h> // socket
 #include <netinet/in.h> // sockaddr_in
-#include <string.h> // memset
+#include <cstring> // memset, strtok
 #include <fcntl.h> // fcntl
 #include <unistd.h> // close
 #include <vector>
+#include <set>
 #include <pthread.h>
 #include <fstream> // file
 #include <nlohmann/json.hpp> // json
+#include <filesystem>
+#include <time.h> // time
 
 #define TCP_PORT 8001
 
 using json = nlohmann::json;
+namespace fs = std::filesystem;
 
 class Server
 {
@@ -25,6 +29,7 @@ private:
     pthread_rwlock_t userlock;
     pthread_rwlock_t postlock;
     int post_num;
+    std::set<std::string> ids;
 
 public:
     Server(int port = 8001);
@@ -39,6 +44,7 @@ public:
     void wclosej(int, std::ofstream &);
     int check(int);
     int check(int, std::string);
+    int bSearch(const json &, const int, int, int);
     // main func
     void mySend(int, std::string);
     int login(std::string, std::string);
@@ -50,7 +56,9 @@ public:
     int modifyC(std::string, std::string, std::string);
     int deleteC(std::string, std::string);
     void resign(int);
-
+    int upload(const std::string);
+    int download(const std::string);
+    int logout(const std::string);
 };
 
 void* start(void* fdp);
@@ -82,6 +90,12 @@ Server::Server(int port): ssock(0), csock(0), clen(0), post_num(1)
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(TCP_PORT);
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    fs::path p("./files");
+    if (!fs::exists(p))
+    {
+        fs::create_directory("./files");
+    }
 }
 
 Server::~Server()
@@ -236,15 +250,14 @@ void Server::wclosej(int select, std::ofstream &file)
 
 int Server::check(int value)
 {
-    int idx = 0;
     json jf = readj(2);
-    for (auto x: jf["posts"])
-    {
-        if (x["id"] == value)
-            return idx;
-        idx += 1;
-    }
-    return -1;
+
+    if (jf["posts"][0]["id"] == value)
+        return 0;
+    else if (jf["posts"][jf["posts"].size()-1]["id"] == value)
+        return jf["posts"].size()-1;
+
+    return bSearch(jf, value, 0, jf["posts"].size() - 1);
 }
 
 // 1:id, 2:nick
@@ -275,6 +288,29 @@ int Server::check(int select, std::string value)
     return -1;
 }
 
+int Server::bSearch(const json &jf, const int value, int min, int max)
+{
+    if (min > max)
+        return -1;
+
+    int mid = (max + min) / 2;
+
+    int pivot = jf["posts"][mid]["id"];
+
+    if (pivot == value)
+        return mid;
+    else if (pivot < value)
+    {
+        return bSearch(jf, value, mid+1, max);
+    }
+    else if (pivot > value)
+    {
+        return bSearch(jf, value, min, mid-1);
+    }
+
+    return -3;
+}
+
 void Server::mySend(int fd, std::string text)
 {
     send(fd, text.c_str(), text.length(), 0);
@@ -282,20 +318,31 @@ void Server::mySend(int fd, std::string text)
 
 int Server::login(std::string id, std::string pw)
 {
-    int id_flag = 0, pw_flag = 0;
+    int id_flag = 0, pw_flag = 0, id_dup = 1;
     json jf = readj(1);
 
     int idx = check(1, id);
     if (idx != -1)
     {
+        std::string name(jf["users"][idx]["id"]);
+
+        if (ids.find(name) != ids.end())
+        {
+            id_dup = 0;
+            std::cout << "duplicated!\n";
+        }
+
         id_flag = 1;
         if (jf["users"][idx]["pw"] == pw)
         {
             pw_flag = 1;
+            ids.insert(name);
         }
     }
 
-    if (id_flag == 0)
+    if (id_dup == 0)
+        return -3;
+    else if (id_flag == 0)
         return -1;
     else if (pw_flag == 0)
         return -2;
@@ -319,7 +366,19 @@ int Server::signUp(std::string id, std::string name, std::string nick, std::stri
 int Server::createP(std::string title, std::string nick, std::string text)
 {
     json jf = readj(2);
-    jf["posts"].push_back(json::object({ {"id", post_num}, {"title", title}, {"nick", nick}, {"text", text}}));
+    
+    // make time
+    time_t rawtime;
+    struct tm *tm;
+    char ctime[30] {};
+
+    time(&rawtime);
+    tm = localtime(&rawtime);
+    strftime(ctime, sizeof(ctime), "%Y. %m. %d. %H:%M:%S", tm);
+    std::string current_time(ctime);
+    // 
+
+    jf["posts"].push_back(json::object({ {"id", post_num}, {"title", title}, {"nick", nick}, {"text", text}, {"time", current_time}}));
     jf["posts"][post_num]["comments"] = json::array();
 
     int fnum = 2;
@@ -430,6 +489,65 @@ void Server::resign(int idx)
     wclosej(fnum, temp);
 }
 
+int Server::upload(std::string fname)
+{
+    std::string path = "./files/" + fname;
+    std::ofstream save(path, std::ios::binary);
+    
+    char buffer[1024] {};
+    while (1) 
+    {
+        int valread = recv(csock, buffer, 1024, 0);
+        std::string flag(buffer);
+        if (flag == "exit") break;
+        
+        save.write(buffer, valread);
+    
+        const char *response = "Message received";
+        send(csock, response, strlen(response), 0);
+        memset(buffer, 0, sizeof(buffer));
+    }
+    save.close();
+    
+    return 1;
+}
+
+int Server::download(const std::string fname)
+{  
+    std::string path = "./files/" + fname;
+    std::ifstream load(path, std::ios::binary);
+
+    const int SIZE = 1024;
+    char buffer[SIZE];
+    char message[SIZE];
+    while (1)
+    {
+        load.read(message, SIZE);
+        if (load.gcount() <= 0) break;
+
+        send(csock, message, load.gcount(), 0);
+        recv(csock, buffer, SIZE, 0);
+
+        memset(buffer, 0, sizeof(buffer)); // 버퍼 초기화
+        memset(message, 0, sizeof(message));
+    }
+    load.close();
+    send(csock, "exit", strlen("exit"), 0);
+    
+    return 1;
+}
+
+int Server::logout(const std::string id)
+{
+    if (ids.find(id) == ids.end())
+        return 0;
+    else
+    {
+        ids.erase(id);
+        return 1;
+    }
+}
+
 void* start(void* fdp)
 {
     char buf[100];
@@ -455,8 +573,7 @@ void* start(void* fdp)
             bServer.mySend(fd, "-3");
             continue;
         }
-
-        bflag = bflag.substr(0, bflag.find(':'));
+        
         std::cout << flag << "\n";
 
         switch (flag)
@@ -477,6 +594,8 @@ void* start(void* fdp)
                     bServer.mySend(fd, "-1");
                 else if (result == -2) // 비밀번호 틀림
                     bServer.mySend(fd, "-2");
+                else if (result == -3) // 중복 로그인
+                    bServer.mySend(fd, "-3");
                 break;
             }
 
@@ -500,12 +619,24 @@ void* start(void* fdp)
             case 3:
             {
                 // buf = 3
+                std::vector<std::string> tokens;
+                // bServer.buftok(buf, 1, tokens);
+
                 json jf = bServer.readj(2);
+
+                // int st = std::stoi(tokens[0]) - 1;
+                std::string mesg;
+                // for (int i = 10 * st; i < 10; i++)
+                // {   
+                //     if (jf["posts"][i] == nullptr)
+                //         break;
+                //     mesg += to_string(jf["posts"][i]) + "\n";
+                // }
                 for (auto x: jf["posts"])
-                {
-                    bServer.mySend(fd, to_string(x));
+                {   
+                    mesg += to_string(x) + "\n";
                 }
-                bServer.mySend(fd, "1");
+                bServer.mySend(fd, mesg);
                 break;
             }
 
@@ -646,12 +777,55 @@ void* start(void* fdp)
                 break;
             }
 
+            case 12:
+            {
+                // buf = 12:id:file name
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 2, tokens);
+                std::string temp = tokens[0] + "_" + tokens[1];
+
+                int result = bServer.upload(temp);
+                if (result)
+                    bServer.mySend(fd, "1");
+                else
+                    bServer.mySend(fd, "0");
+                break;
+            }
+
+            case 13:
+            {
+                // buf = 13:id:file name
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 2, tokens);
+                std::string temp = tokens[0] + "_" + tokens[1];
+
+                int result = bServer.download(temp);
+                if (result)
+                    bServer.mySend(fd, "1");
+                else
+                    bServer.mySend(fd, "0");
+                break;
+            }
+
+            case 14:
+            {
+                // buf = 1:id
+                std::vector<std::string> tokens;
+                bServer.buftok(buf, 1, tokens);
+                int result = bServer.logout(tokens[0]);
+
+                if (result == 1)
+                    bServer.mySend(fd, "1");
+                else if (result == 0)
+                    bServer.mySend(fd, "0");
+                break;
+            }
+
             default:
             {
-                bServer.mySend(fd, "-3");
+                bServer.mySend(fd, "over the switchbow");
                 return NULL;
             }
         }
     }
 }
-
