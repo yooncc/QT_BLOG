@@ -92,7 +92,7 @@ void PostView::postviewInit(
     contentsLabel->setText(contents);
     contentsLabel->setStyleSheet(
         "background-color: pink; color: black;font-size: 13px; font-weight: bold; border: none;");
-    contentsLabel->adjustSize();
+    // contentsLabel->adjustSize();
     contentsLabel->setReadOnly(true);
     contentsLabel->setGeometry(QRect(8, offsetY, width - 16, contentsLabel->height()));
 
@@ -113,6 +113,18 @@ void PostView::postviewInit(
     connect(cmtBtn, SIGNAL(clicked()), this, SLOT(cmtAct()));
 
     offsetY += cmtBtn->height() + 16;
+
+    QList<comment>* cmtArr = client.postInfos[0]->comments;
+    if (cmtArr->size() > 0) {
+        for (int i = 0 ; i<cmtArr->size(); i++) {
+            CommentCell* commentCell = new CommentCell(scrollWidget);
+            commentCell->nickLabel->setFixedWidth(width-16);
+            commentCell->contentsLabel->setFixedWidth(width-16);
+            commentCell->setGeometry(QRect(0,offsetY,width,80));
+            commentCell->initComment(cmtArr->at(i).nick, cmtArr->at(i).contents);
+            offsetY += commentCell->height() + 16;
+        }
+    }
 
     scrollWidget->setFixedHeight(offsetY);
     scrollArea->setWidget(scrollWidget);

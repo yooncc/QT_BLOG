@@ -35,6 +35,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resource/resourceFile.qrc
         writeview.h writeview.cpp
         comment.h
+        commentcell.h commentcell.cpp
 
     )
 # Define target properties for Android with Qt 6 as:

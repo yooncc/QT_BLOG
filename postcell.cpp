@@ -67,11 +67,6 @@ PostCell::PostCell(QWidget *parent)
 }
 
 // SLOT
-// void PostCell::cellClicked()
-// {
-//     qDebug("cellClicked");
-//     // qDebug() << (this->parent())->
-// }
 
 // CUSTOM
 void PostCell::initPost(QString imageUrl,

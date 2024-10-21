@@ -5,8 +5,10 @@
 #include <QScrollArea>
 #include <QTextEdit>
 #include <QWidget>
+#include <QGridLayout>
 #include "client.h"
 #include "util.h"
+#include "commentcell.h"
 
 class PostView : public QWidget
 {
@@ -22,6 +24,7 @@ private:
     QWidget *scrollWidget;
     QTextEdit *commentEdit;
     QPushButton *cmtBtn;
+    QGridLayout *commentGridLayout;
     int postId;
     int viewOriginX;
 
