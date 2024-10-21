@@ -1,7 +1,6 @@
 #include "introview.h"
 #include "client.h"
 
-
 IntroView::IntroView(QWidget *parent)
     : QWidget{parent}
 {
@@ -11,11 +10,11 @@ IntroView::IntroView(QWidget *parent)
     int writeBtnY = parent->height() - (((MainWindow *) (this->parent()))->toolbarHeight)
                     - btnHeight;
 
-    QScrollArea* scrollArea = new QScrollArea(this);
-    scrollArea->setWidgetResizable(true);  // 스크롤 영역이 동적으로 크기 조정 가능하게 설정
-    scrollArea->setGeometry(QRect(0,0,parent->width(),writeBtnY));
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true); // 스크롤 영역이 동적으로 크기 조정 가능하게 설정
+    scrollArea->setGeometry(QRect(0, 0, parent->width(), writeBtnY));
 
-    QWidget* scrollWidget = new QWidget;
+    QWidget *scrollWidget = new QWidget;
     postGridLayout = new QGridLayout(scrollWidget);
     postGridLayout->setContentsMargins(16, 16, 16, 16);
 
@@ -23,11 +22,12 @@ IntroView::IntroView(QWidget *parent)
 
     writeBtn = util.makePushButton(this, "write", "", 8, false, "");
 
-    writeBtn->setGeometry(QRect(0, writeBtnY, ((parent->width())*0.7) , 30));
+    writeBtn->setGeometry(QRect(0, writeBtnY, ((parent->width()) * 0.7), 30));
     connect(writeBtn, SIGNAL(clicked()), this, SLOT(startWrite()));
 
     refreshBtn = util.makePushButton(this, "refresh", "", 8, false, "");
-    refreshBtn->setGeometry(QRect(writeBtn->x()+writeBtn->width(), writeBtn->y(), ((parent->width())*0.3) , 30));
+    refreshBtn->setGeometry(
+        QRect(writeBtn->x() + writeBtn->width(), writeBtn->y(), ((parent->width()) * 0.3), 30));
     connect(refreshBtn, SIGNAL(clicked()), this, SLOT(startRefresh()));
 }
 
@@ -35,7 +35,7 @@ IntroView::IntroView(QWidget *parent)
 void IntroView::startWrite()
 {
     qDebug("startWrite");
-    ((MainWindow*)(this->parent()))->goToWrite();
+    ((MainWindow *) (this->parent()))->goToWrite();
     // initIntro();
 }
 
@@ -49,7 +49,7 @@ void IntroView::startRefresh()
 void IntroView::cellClicked(int index)
 {
     qDebug("cellClicked");
-    ((MainWindow*)(this->parent()))->goToPost(index);
+    ((MainWindow *) (this->parent()))->goToPost(index);
 }
 
 // CUSTOM
@@ -67,25 +67,31 @@ void IntroView::setPost()
     // 기존 위젯 모두 제거
     QLayoutItem *child;
     while ((child = postGridLayout->takeAt(0)) != nullptr) {
-        delete child->widget();  // 레이아웃에서 위젯을 제거하고 삭제
-        delete child;  // 레이아웃 아이템 삭제
+        delete child->widget(); // 레이아웃에서 위젯을 제거하고 삭제
+        delete child;           // 레이아웃 아이템 삭제
     }
 
-    int n,m=-1;
-    for (int i=0; i<client.postInfos.size();i++) {
-        n = i%4;
-        if (i%4==0)
+    int n, m = -1;
+    for (int i = 0; i < client.postInfos.size(); i++) {
+        n = i % 4;
+        if (i % 4 == 0)
             m++;
-        PostCell* postCell = new PostCell;
-        postCell->setFixedSize(260,300);
+        PostCell *postCell = new PostCell;
+        postCell->setFixedSize(260, 300);
 
         // connect(postCell->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));
         connect(postCell->buttonGesture, &QPushButton::clicked, this, [=]() {
-            cellClicked(i);  // i를 인자로 전달
+            cellClicked(i); // i를 인자로 전달
         });
 
-        postCell->initPost("image1",client.postInfos[i]->title,client.postInfos[i]->contents,"2024/10/9","12","profile",client.postInfos[i]->nick,"99");
-        postGridLayout->addWidget(postCell,m,n);
+        postCell->initPost("image1",
+                           client.postInfos[i]->title,
+                           client.postInfos[i]->contents,
+                           client.postInfos[i]->rtime,
+                           QString::number(client.postInfos[i]->comments->size()),
+                           "profile",
+                           client.postInfos[i]->nick,
+                           "99");
+        postGridLayout->addWidget(postCell, m, n);
     }
-
 }

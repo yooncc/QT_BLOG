@@ -3,27 +3,34 @@
 
 #include <QWidget>
 // #include <QScrollArea>
-#include <QPushButton>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QTextEdit>
-#include "util.h"
 #include "client.h"
+#include "util.h"
 
 class WriteView : public QWidget
 {
     Q_OBJECT
 private:
     // QScrollArea* scrollArea;
-    QPushButton* backBtn;
-    QPushButton* writeBtn;
+    QPushButton *backBtn;
+    QPushButton *fileBtn;
+    QPushButton *imageBtn;
+    QPushButton *writeBtn;
     QLineEdit *titleEdit;
     QTextEdit *contentEdit;
+
 public:
     explicit WriteView(QWidget *parent = nullptr);
     Util util;
 public slots:
     void backAct();
+    void fileAct();
+    void imageAct();
     void writeAct();
+    void titleCheckTextLimit();
+    void contentsCheckTextLimit();
 
 signals:
 };

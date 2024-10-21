@@ -1,20 +1,22 @@
 #include "client.h"
+#include <QDebug>
 #include <QHostAddress>
 #include <QString>
-#include <QDebug>
-
 
 Client client;
 
 Client::Client(QObject *parent)
-    : QObject(parent), socket(new QTcpSocket(this))
+    : QObject(parent)
+    , socket(new QTcpSocket(this))
 {
     // 소켓과 관련된 시그널과 슬롯 연결
     connect(socket, &QTcpSocket::connected, this, &Client::onConnected);
     connect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
     connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
-    connect(socket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
-            this, &Client::onErrorOccurred);
+    connect(socket,
+            QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::errorOccurred),
+            this,
+            &Client::onErrorOccurred);
 }
 
 Client::~Client()
@@ -43,14 +45,12 @@ void Client::onConnected()
 {
     // 서버에 연결되었을 때 호출됨
     qDebug() << "Connected to server!";
-
 }
 
 void Client::setFlag(int num)
 {
     flag = num;
 }
-
 
 void Client::sendMessage(const QString &message)
 {
@@ -64,7 +64,7 @@ void Client::sendMessage(const QString &message)
     QTimer timer;
     timer.setSingleShot(true);
     connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
-    timer.start(5000);  // 타임아웃 시간 설정
+    timer.start(5000); // 타임아웃 시간 설정
 
     // 응답 또는 타임아웃까지 대기
     loop.exec();
@@ -77,7 +77,6 @@ void Client::sendMessage(const QString &message)
         qDebug() << "No response received (timeout).";
     }
 }
-
 
 void Client::sendLogin(QString id, QString pw)
 {
@@ -102,7 +101,8 @@ void Client::postGet(QString postNum)
 
 void Client::writePost(QString title, QString detail)
 {
-    QString result = QString("%1:%2:%3:%4").arg("5").arg(title).arg(client.cliInfo.MemberNickName).arg(detail);
+    QString result
+        = QString("%1:%2:%3:%4").arg("5").arg(title).arg(client.cliInfo.MemberNickName).arg(detail);
     setFlag(5);
     sendMessage(result);
 }
@@ -131,7 +131,12 @@ void Client::writeComment(comment com)
 
 void Client::modifyComment(Post_info post, comment com)
 {
-    QString result = QString("%1:%2:%3:%4").arg("9").arg(nowPost->id).arg(com.idx).arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
+    QString result
+        = QString("%1:%2:%3:%4")
+              .arg("9")
+              .arg(nowPost->id)
+              .arg(com.idx)
+              .arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
     setFlag(9);
     sendMessage(result);
 }
@@ -159,7 +164,6 @@ void Client::uploadFile(QString fileName)
     sendMessage(result);
 }
 
-
 void Client::downLoadFile(QString fileName)
 {
     QString result = QString("%1:%2:%3").arg("13").arg(nowPost->id).arg(fileName);
@@ -176,9 +180,6 @@ void Client::sendLogout()
     qDebug() << result;
     sendMessage(result);
 }
-
-
-
 
 void Client::onReadyRead()
 {
@@ -220,13 +221,12 @@ void Client::onReadyRead()
         } else {
             postTable = std::move(parsedData);
             postInfos.clear();
-            for(int i = 0; i < postTable.size(); i++)
-            {
+            for (int i = 0; i < postTable.size(); i++) {
                 QByteArray postData = postTable[i].toUtf8();
                 if (postData.isEmpty())
                     continue;
 
-                Post_info* postInfo = jsonParsing.parsePost(postData);
+                Post_info *postInfo = jsonParsing.parsePost(postData);
                 postInfos.append(postInfo);
                 qDebug() << "clients " << postInfos.size();
             }
@@ -328,7 +328,6 @@ void Client::onReadyRead()
         qDebug() << "Unknown flag value!";
         break;
     }
-
 }
 
 void Client::onDisconnected()
@@ -343,7 +342,7 @@ void Client::onErrorOccurred(QAbstractSocket::SocketError socketError)
     qDebug() << "Socket error:" << socket->errorString();
 }
 
-Post_info* Client::getNowPostInfo()
+Post_info *Client::getNowPostInfo()
 {
     return nowPost;
 }
@@ -351,6 +350,4 @@ Post_info* Client::getNowPostInfo()
 void Client::setNowPostInfo(int id)
 {
     this->nowPost->id = id;
-
 }
-

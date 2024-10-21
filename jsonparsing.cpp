@@ -4,7 +4,8 @@ JsonParsing::JsonParsing(QObject *parent)
     : QObject{parent}
 {}
 
-Post_info* JsonParsing::parsePost(const QByteArray& data) {
+Post_info *JsonParsing::parsePost(const QByteArray &data)
+{
     // 1. QByteArray 데이터를 QJsonDocument로 변환
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
 
@@ -18,6 +19,7 @@ Post_info* JsonParsing::parsePost(const QByteArray& data) {
         QString nick = jsonObj["nick"].toString();
         QString text = jsonObj["text"].toString();
         QString title = jsonObj["title"].toString();
+        QString rtime = jsonObj["time"].toString();
         QJsonArray commentsArray = jsonObj["comments"].toArray();
 
         qDebug() << "ID:" << id;
@@ -25,8 +27,10 @@ Post_info* JsonParsing::parsePost(const QByteArray& data) {
         qDebug() << "Text:" << text;
         qDebug() << "Title:" << title;
 
+        Post_info *postInfo = new Post_info;
         // 5. "comments" 배열을 파싱
         if (jsonObj.contains("comments") && jsonObj["comments"].isArray()) {
+            postInfo->comments = new QList<comment>;
             for (int i = 0; i < commentsArray.size(); ++i) {
                 QJsonObject commentObj = commentsArray[i].toObject();
                 QString commentNick = commentObj["nick"].toString();
@@ -34,11 +38,13 @@ Post_info* JsonParsing::parsePost(const QByteArray& data) {
 
                 qDebug() << "Comment" << i << "Nick:" << commentNick;
                 qDebug() << "Comment" << i << "Text:" << commentText;
+                struct comment cmt;
+                cmt.nick = commentNick;
+                cmt.contents = commentText;
+                postInfo->comments->append(cmt);
             }
         }
-
-        Post_info* postInfo = new Post_info;
-        postInfo->initPost(id, nick, title, text, commentsArray);
+        postInfo->initPost(id, nick, title, text, rtime);
         return postInfo;
 
     } else {
@@ -47,7 +53,8 @@ Post_info* JsonParsing::parsePost(const QByteArray& data) {
     }
 }
 
-Info JsonParsing::parseCliInfo(const QByteArray& data) {
+Info JsonParsing::parseCliInfo(const QByteArray &data)
+{
     // 1. QByteArray 데이터를 QJsonDocument로 변환
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
 

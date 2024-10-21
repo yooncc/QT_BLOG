@@ -1,32 +1,34 @@
 #ifndef POSTVIEW_H
 #define POSTVIEW_H
 
-#include <QWidget>
-#include <QScrollArea>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QTextEdit>
-#include "util.h"
+#include <QWidget>
 #include "client.h"
+#include "util.h"
 
 class PostView : public QWidget
 {
     Q_OBJECT
 private:
-    QScrollArea* scrollArea;
-    QPushButton* backBtn;
+    QScrollArea *scrollArea;
+    QPushButton *backBtn;
     QLabel *titleLabel;
     QLabel *nickLabel;
     QLabel *dateLabel;
     QLabel *imageLabel;
-    QLabel *contentsLabel;
-    QWidget* scrollWidget;
+    QTextEdit *contentsLabel;
+    QWidget *scrollWidget;
     QTextEdit *commentEdit;
-    QPushButton* cmtBtn;
+    QPushButton *cmtBtn;
     int postId;
     int viewOriginX;
+
 public:
     explicit PostView(QWidget *parent = nullptr);
-    void postviewInit(QString title, QString nick, QString date, QString image, QString contents, int id);
+    void postviewInit(
+        QString title, QString nick, QString date, QString image, QString contents, int id);
     Util util;
 
 public slots:

@@ -1,22 +1,22 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QDockWidget>
+#include <QFormLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMainWindow>
 #include <QToolBar>
-#include <QDialog>
-#include <QFormLayout>
-#include <QLineEdit>
-#include <QDialogButtonBox>
 #include "introview.h"
 #include "postview.h"
-#include "writeview.h"
 #include "util.h"
+#include "writeview.h"
 
-class IntroView;  // 전방 선언 추가
+class IntroView; // 전방 선언 추가
 class PostView;  // 전방 선언 추가
-class WriteView;    // 전방 선언 추가
+class WriteView; // 전방 선언 추가
 
 class MainWindow : public QMainWindow
 {
