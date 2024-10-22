@@ -56,6 +56,24 @@ void WriteView::fileAct()
         return;
     QFileInfo fileInfo(fileName);
     client.fn = fileInfo.fileName();
+    client.dir = fileInfo.absolutePath();
+    QString fullFilePath = client.dir + "/" + client.fn;
+    QFile file(fullFilePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Could not open the file at:" << fullFilePath;
+        return;
+    }
+    client.sendMessage(client.fn);
+    while (!file.atEnd()) {
+        QByteArray buffer = file.read(1024);
+        client.socket->write(buffer);
+        if (!client.socket->waitForBytesWritten(5000)){
+            qDebug() << "Error writing data:" << client.socket->errorString();
+            break;
+        }
+    }
+    client.sendMessage("exit");
+    file.close(); // 파일 닫기
 }
 
 void WriteView::imageAct()

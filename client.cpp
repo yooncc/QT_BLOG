@@ -162,6 +162,8 @@ void Client::uploadFile(QString fileName)
     setFlag(12);
     qDebug() << result;
     sendMessage(result);
+
+
 }
 
 void Client::downLoadFile(QString fileName)

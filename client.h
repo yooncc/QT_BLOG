@@ -19,6 +19,7 @@ class Client : public QObject
     Q_OBJECT
 
 public:
+    QTcpSocket *socket; // TCP 소켓 객체
     Info cliInfo;
     explicit Client(QObject *parent = nullptr);
     ~Client();
@@ -45,6 +46,7 @@ public:
     JsonParsing jsonParsing;
     QList<Post_info *> postInfos;
     QString fn;
+    QString dir;
 private slots:
     void onConnected();    // 서버에 연결되었을 때 호출
     void onReadyRead();    // 서버로부터데이터 수신 시 호출
@@ -58,7 +60,6 @@ private:
 
     QStringList postTable;
     QString post;
-    QTcpSocket *socket; // TCP 소켓 객체
     int status;
 
 };
