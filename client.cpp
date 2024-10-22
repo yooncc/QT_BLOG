@@ -134,7 +134,7 @@ void Client::modifyComment(Post_info post, comment com)
     QString result
         = QString("%1:%2:%3:%4")
               .arg("9")
-              .arg(nowPost->id)
+              .arg("nowPost->id")
               .arg(com.idx)
               .arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
     setFlag(9);
@@ -143,7 +143,7 @@ void Client::modifyComment(Post_info post, comment com)
 
 void Client::deleteComment(comment com)
 {
-    QString result = QString("%1:%2:%3").arg("10").arg(nowPost->id).arg(com.idx);
+    QString result = QString("%1:%2:%3").arg("10").arg("a"/*nowPost->id*/).arg(com.idx);
     setFlag(10);
     sendMessage(result);
 }
@@ -158,7 +158,7 @@ void Client::subMembership(QString id, QString pw)
 
 void Client::uploadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("12").arg(nowPost->id).arg(fileName);
+    QString result = QString("%1:%2:%3").arg("12").arg(client.postInfos.size()).arg(fileName);
     setFlag(12);
     qDebug() << result;
     sendMessage(result);
@@ -166,7 +166,7 @@ void Client::uploadFile(QString fileName)
 
 void Client::downLoadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("13").arg(nowPost->id).arg(fileName);
+    QString result = QString("%1:%2:%3").arg("13").arg("nowPost->id").arg(fileName);
     setFlag(13);
     qDebug() << result;
     sendMessage(result);
@@ -196,6 +196,8 @@ void Client::onReadyRead()
     // 서버로부터 데이터가 수신되었을 때 호출됨
     QByteArray data = socket->readAll();
     QString datas = QString::fromUtf8(data);
+    qDebug() << "test";
+    qDebug() << datas;
     QStringList parsedData = datas.split('\n'); // QString datats[]
     bool ok = true;
     switch (flag) {
@@ -238,7 +240,7 @@ void Client::onReadyRead()
 
                 Post_info *postInfo = jsonParsing.parsePost(postData);
                 postInfos.append(postInfo);
-                qDebug() << "clients " << postInfos.size();
+                qDebug() << "clients :" << postInfos.size();
             }
             emit allPostgetFinished();
         }
@@ -255,10 +257,9 @@ void Client::onReadyRead()
     case 5: // WritePost
         if (parsedData[0] == "0") {
             qDebug() << "WritePost error";
-        } else if (parsedData[0] == "1") {
-            bool ok = true;
-            int id = parsedData[0].toInt(&ok); // ??? id 어디에 쓸지??
-            // 추가 처리가 필요할 수 있습니다.
+        }
+        else{
+            qDebug() << "WritePost OK";
         }
         break;
 
@@ -313,8 +314,12 @@ void Client::onReadyRead()
         }
         break;
     case 12: // fileUpload
+        qDebug() << "received Message~~~~~~~~~~~~~~~~~~~~";
+        qDebug() << datas;
         if(parsedData[0] == "start"){
             qDebug() << "Start";
+            QByteArray data = socket->readAll();
+            qDebug() << data;
         }
         else if (parsedData[0] == "0") {
             qDebug() << "UPLoad error";
@@ -353,14 +358,4 @@ void Client::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
     // 소켓에서 에러가 발생했을 때 처리
     qDebug() << "Socket error:" << socket->errorString();
-}
-
-Post_info *Client::getNowPostInfo()
-{
-    return nowPost;
-}
-
-void Client::setNowPostInfo(int id)
-{
-    this->nowPost->id = id;
 }
