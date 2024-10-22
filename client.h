@@ -6,6 +6,8 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QTimer>
+#include <QFileDialog>
+#include <QFileInfo>
 #include "comment.h"
 #include "introview.h"
 #include "jsonparsing.h"
@@ -38,17 +40,14 @@ public:
     void downLoadFile(QString fileName);
     void sendLogout();
     void setNowPostInfo(int id);
-
     Post_info *getNowPostInfo();
     void setNowPostInfo();
-
     JsonParsing jsonParsing;
-    // IntroView *intro;
     QList<Post_info *> postInfos;
-
+    QString fn;
 private slots:
     void onConnected();    // 서버에 연결되었을 때 호출
-    void onReadyRead();    // 서버로부터 데이터 수신 시 호출
+    void onReadyRead();    // 서버로부터데이터 수신 시 호출
     void onDisconnected(); // 서버와 연결이 끊겼을 때 호출
     void onErrorOccurred(QAbstractSocket::SocketError socketError); // 에러 발생 시 호출
 signals:
@@ -61,7 +60,7 @@ private:
     QString post;
     QTcpSocket *socket; // TCP 소켓 객체
     int status;
-    Post_info *nowPost;
+
 };
 
 extern Client client;

@@ -209,7 +209,6 @@ void MainWindow::initToolbar(int session)
 void MainWindow::initMain()
 {
     qDebug() << "initMain";
-    qDebug() << client.postInfos.size();
     intro = new IntroView(this);
     setCentralWidget(intro);
     intro->initIntro();
@@ -217,10 +216,10 @@ void MainWindow::initMain()
 
 void MainWindow::goToPost(int index)
 {
-    // if (client.cliInfo.rank < 1) {
-    //     util.showErrorMsg(this, "권한이 없습니다.");
-    //     return;
-    // }
+    if (client.cliInfo.rank < 1) {
+        util.showErrorMsg(this, "권한이 없습니다.");
+        return;
+    }
     intro->close();
     postView = new PostView(this);
     postView->postviewInit(client.postInfos[index]->title,
@@ -235,10 +234,10 @@ void MainWindow::goToPost(int index)
 
 void MainWindow::goToWrite()
 {
-    // if (client.cliInfo.rank < 1) {
-    //     util.showErrorMsg(this, "권한이 없습니다.");
-    //     return;
-    // }
+    if (client.cliInfo.rank < 1) {
+        util.showErrorMsg(this, "권한이 없습니다.");
+        return;
+    }
     intro->close();
     writeView = new WriteView(this);
     // postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);

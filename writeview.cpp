@@ -51,7 +51,11 @@ void WriteView::backAct()
 
 void WriteView::fileAct()
 {
-    qDebug("fileAct");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("All Files (*);;Text Files (*.txt);;Images (*.png *.jpg)"));
+    if (fileName.isEmpty())
+        return;
+    QFileInfo fileInfo(fileName);
+    client.fn = fileInfo.fileName();
 }
 
 void WriteView::imageAct()
@@ -68,8 +72,8 @@ void WriteView::writeAct()
         return;
     }
     client.writePost(titleEdit->text(), contentEdit->toPlainText());
-    qDebug() << titleEdit->text();
-    qDebug() << contentEdit->toPlainText();
+    client.uploadFile(client.fn);
+
     ((MainWindow *) (this->parent()))->initMain();
 }
 

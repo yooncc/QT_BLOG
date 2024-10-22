@@ -8,6 +8,10 @@
 #include <QTextEdit>
 #include "client.h"
 #include "util.h"
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QMessageBox>
+
 
 class WriteView : public QWidget
 {
