@@ -174,11 +174,21 @@ void Client::downLoadFile(QString fileName)
 
 void Client::sendLogout()
 {
-    QString result = QString("%1:%2:%3").arg("14").arg(cliInfo.MemberId).arg(cliInfo.MemberPw);
-    client.cliInfo = {"", "", "", "", 0};
-    setFlag(14);
-    qDebug() << result;
-    sendMessage(result);
+    if (cliInfo.rank == 0)
+    {
+        QString err = "-1";
+        setFlag(14);
+        sendMessage(err);
+        return;
+    }
+    else
+    {
+        QString result = QString("%1:%2:%3").arg("14").arg(cliInfo.MemberId).arg(cliInfo.MemberPw);
+        client.cliInfo = {"", "", "", "", 0};
+        setFlag(14);
+        qDebug() << result;
+        sendMessage(result);
+    }
 }
 
 void Client::onReadyRead()
@@ -303,7 +313,10 @@ void Client::onReadyRead()
         }
         break;
     case 12: // fileUpload
-        if (parsedData[0] == "0") {
+        if(parsedData[0] == "start"){
+            qDebug() << "Start";
+        }
+        else if (parsedData[0] == "0") {
             qDebug() << "UPLoad error";
         } else if (parsedData[0] == "1") {
             qDebug() << "UpLoads uccess";

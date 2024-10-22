@@ -20,7 +20,7 @@ private:
     QLabel *nickLabel;
     QLabel *dateLabel;
     QLabel *imageLabel;
-    QTextEdit *contentsLabel;
+    QLabel *contentsLabel;
     QWidget *scrollWidget;
     QTextEdit *commentEdit;
     QPushButton *cmtBtn;
@@ -31,7 +31,7 @@ private:
 public:
     explicit PostView(QWidget *parent = nullptr);
     void postviewInit(
-        QString title, QString nick, QString date, QString image, QString contents, int id);
+        QString title, QString nick, QString date, QString image, QString contents, int id, int index);
     Util util;
 
 public slots:
