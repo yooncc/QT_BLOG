@@ -7,7 +7,7 @@ PostCell::PostCell(QWidget *parent)
 
     QLabel *backgroundLabel = new QLabel(this);
     backgroundLabel->setGeometry(QRect(0, 0, cellWidth, cellHeight));
-    backgroundLabel->setStyleSheet("background-color: white; border-radius: 7px;");
+    backgroundLabel->setStyleSheet("background-color: white; border-radius: 11px;");
 
     imageLabel = new QLabel(this);
     titleLabel = new QLabel(this);
@@ -19,15 +19,17 @@ PostCell::PostCell(QWidget *parent)
     likeLabel = new QLabel(this);
 
     imageLabel->setGeometry(QRect(0, currentY, cellWidth, cellHeight * 0.35));
-    imageLabel->setStyleSheet("background-color: lightgray; color: red;");
+
     currentY += imageLabel->height();
 
-    titleLabel->setGeometry(QRect(0, currentY, cellWidth, cellHeight * 0.1));
+    titleLabel->setGeometry(QRect(8, currentY, cellWidth-16, cellHeight * 0.1));
     titleLabel->setStyleSheet("color: black; font-weight: bold; font-size: 16px;");
-    titleLabel->setAlignment(Qt::AlignCenter); // 텍스트 가운데 정렬
+    titleLabel->setAlignment(Qt::AlignLeft); // 텍스트 가운데 정렬
     currentY += titleLabel->height();
 
     contentsLabel->setGeometry(QRect(8, currentY, cellWidth - 16, cellHeight * 0.3));
+    // 수직 스크롤바 비활성화
+    contentsLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     contentsLabel->setStyleSheet("color: black; font-size: 12px; border: none;");
 
     currentY += contentsLabel->height();
@@ -48,7 +50,7 @@ PostCell::PostCell(QWidget *parent)
     border2->setGeometry(QRect(0, currentY, cellWidth, 1));
     border2->setStyleSheet("background-color: lightgray;");
 
-    profileLabel->setGeometry(QRect(8, currentY, cellHeight * 0.15, cellHeight * 0.15));
+    profileLabel->setGeometry(QRect(8, currentY+cellHeight * 0.025, cellHeight * 0.1, cellHeight * 0.1));
     // profileLabel->setStyleSheet("border: 1px solid black;");
 
     nickLabel->setGeometry(QRect(profileLabel->x() + profileLabel->width() + 4,
@@ -79,6 +81,24 @@ void PostCell::initPost(QString imageUrl,
                         QString like)
 {
     this->imageLabel->setText(imageUrl);
+    QPixmap pixmap(imageUrl);
+    if (pixmap.isNull()) {
+        pixmap = QPixmap(":/veda_w.png");
+        imageLabel->setPixmap(pixmap.scaled(imageLabel->size(), Qt::KeepAspectRatioByExpanding));
+    }
+    else {
+        imageLabel->setPixmap(pixmap.scaled(imageLabel->size(), Qt::KeepAspectRatioByExpanding));
+        // imageLabel->setFixedSize(pixmap.size());
+        QPainterPath path;
+        QRectF rect = imageLabel->rect();
+        path.addRoundedRect(rect, 11, 11);  // 전체 라운드 처리
+        path.addRect(0, 11, rect.width(), rect.height() - 11); // 아래쪽은 평평하게
+
+        // // 마스크 설정 (위젯의 클리핑 경계를 설정)
+        QRegion maskRegion = QRegion(path.toFillPolygon().toPolygon());
+        imageLabel->setMask(maskRegion);
+    }
+
     this->titleLabel->setText(title);
     this->contentsLabel->setText(contents);
     // contentsLabel->setWordWrap(true);
@@ -90,9 +110,9 @@ void PostCell::initPost(QString imageUrl,
     this->commentLabel->setText(cmtStr);
 
     // this->profileLabel->setText(profile);
-    QPixmap pixmap(profile);
+    pixmap = QPixmap(profile);
     if (pixmap.isNull()) {
-        pixmap = QPixmap(":/lion.jpg");
+        pixmap = QPixmap(":/profile.png");
     }
     profileLabel->setPixmap(pixmap.scaled(profileLabel->size(), Qt::KeepAspectRatio));
 

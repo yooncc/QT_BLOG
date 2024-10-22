@@ -228,7 +228,8 @@ void MainWindow::goToPost(int index)
                            client.postInfos[index]->rtime,
                            "image2",
                            client.postInfos[index]->contents,
-                           client.postInfos[index]->id);
+                           client.postInfos[index]->id,
+                           index);
     setCentralWidget(postView);
 }
 

@@ -17,6 +17,10 @@ IntroView::IntroView(QWidget *parent)
     QWidget *scrollWidget = new QWidget;
     postGridLayout = new QGridLayout(scrollWidget);
     postGridLayout->setContentsMargins(16, 16, 16, 16);
+    // 가로 간격 설정
+    // postGridLayout->setHorizontalSpacing(20);
+    // 세로 간격 설정
+    postGridLayout->setVerticalSpacing(16);
 
     scrollArea->setWidget(scrollWidget);
 
@@ -84,12 +88,12 @@ void IntroView::setPost()
             cellClicked(i); // i를 인자로 전달
         });
 
-        postCell->initPost("image1",
+        postCell->initPost("",
                            client.postInfos[i]->title,
                            client.postInfos[i]->contents,
                            client.postInfos[i]->rtime,
                            QString::number(client.postInfos[i]->comments->size()),
-                           "profile",
+                           "",
                            client.postInfos[i]->nick,
                            "99");
         postGridLayout->addWidget(postCell, m, n);

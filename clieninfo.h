@@ -5,9 +5,9 @@
 
 struct Info
 {
-    QString MemberId;
-    QString MemberName;
-    QString MemberNickName;
-    QString MemberPw;
-    int rank;
+    QString MemberId = "";
+    QString MemberName = "";
+    QString MemberNickName = "";
+    QString MemberPw = "";
+    int rank = 0;
 };

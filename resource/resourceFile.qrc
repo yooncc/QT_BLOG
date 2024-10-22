@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>lion.jpg</file>
+        <file>profile.png</file>
+        <file>veda.png</file>
+        <file>veda_w.png</file>
     </qresource>
 </RCC>

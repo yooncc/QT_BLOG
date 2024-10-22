@@ -37,7 +37,7 @@ void PostView::cmtAct()
 // }
 
 void PostView::postviewInit(
-    QString title, QString nick, QString date, QString image, QString contents, int id)
+    QString title, QString nick, QString date, QString image, QString contents, int id, int index)
 {
     this->postId = id;
     scrollWidget = new QWidget;
@@ -47,6 +47,7 @@ void PostView::postviewInit(
 
     titleLabel = new QLabel(scrollWidget);
     titleLabel->setText(title);
+    titleLabel->setWordWrap(true);
     titleLabel->setStyleSheet("color: black; font-weight: bold; font-size: 32px;");
     titleLabel->adjustSize();
     titleLabel->setGeometry(QRect(8, offsetY, width - 16, titleLabel->height()));
@@ -88,12 +89,12 @@ void PostView::postviewInit(
 
     offsetY += imageLabel->height() + 16;
 
-    contentsLabel = new QTextEdit(scrollWidget);
+    contentsLabel = new QLabel(scrollWidget);
     contentsLabel->setText(contents);
     contentsLabel->setStyleSheet(
-        "background-color: pink; color: black;font-size: 13px; font-weight: bold; border: none;");
-    // contentsLabel->adjustSize();
-    contentsLabel->setReadOnly(true);
+        "color: black;font-size: 13px; font-weight: bold; border: none;");
+    contentsLabel->adjustSize();
+    contentsLabel->setWordWrap(true);
     contentsLabel->setGeometry(QRect(8, offsetY, width - 16, contentsLabel->height()));
 
     offsetY += contentsLabel->height() + 16;
@@ -114,7 +115,7 @@ void PostView::postviewInit(
 
     offsetY += cmtBtn->height() + 16;
 
-    QList<comment>* cmtArr = client.postInfos[0]->comments;
+    QList<comment>* cmtArr = client.postInfos[index]->comments;
     if (cmtArr->size() > 0) {
         for (int i = 0 ; i<cmtArr->size(); i++) {
             CommentCell* commentCell = new CommentCell(scrollWidget);

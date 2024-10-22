@@ -6,6 +6,7 @@
 #include <QPixmap>
 #include <QPushButton>
 #include <QWidget>
+#include <QPainterPath>
 
 class PostCell : public QWidget
 {
