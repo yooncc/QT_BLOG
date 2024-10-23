@@ -39,7 +39,7 @@ IntroView::IntroView(QWidget *parent)
 void IntroView::startWrite()
 {
     qDebug("startWrite");
-    ((MainWindow *) (this->parent()))->goToWrite();
+    ((MainWindow *) (this->parent()))->goToWrite(-1);
     // initIntro();
 }
 
@@ -53,7 +53,7 @@ void IntroView::startRefresh()
 void IntroView::cellClicked(int index)
 {
     qDebug("cellClicked");
-    ((MainWindow *) (this->parent()))->goToPost(index);
+    ((MainWindow *) (this->parent()))->goToPost(index, 0);
 }
 
 // CUSTOM
@@ -80,7 +80,7 @@ void IntroView::setPost()
         n = i % 4;
         if (i % 4 == 0)
             m++;
-        PostCell *postCell = new PostCell;
+        PostCell *postCell = new PostCell(m,n);
         postCell->setFixedSize(260, 300);
 
         // connect(postCell->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));

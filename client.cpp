@@ -107,43 +107,45 @@ void Client::writePost(QString title, QString detail)
     sendMessage(result);
 }
 
-void Client::modifyPost(Post_info post)
+void Client::modifyPost(Post_info *post)
 {
-    QString result = QString("%1:%2:%3").arg("6").arg(post.title).arg(post.contents);
+    QString result = QString("%1:%2:%3:%4").arg("6").arg(post->id).arg(post->title).arg(post->contents);
+    qDebug() << result;
     setFlag(6);
     sendMessage(result);
 }
 
-void Client::deletePost(Post_info post)
+void Client::deletePost(Post_info *post)
 {
-    QString id = QString::number(post.id);
+    QString id = QString::number(post->id);
     QString result = QString("%1:%2").arg("7").arg(id);
     setFlag(7);
     sendMessage(result);
 }
 
-void Client::writeComment(comment com)
+void Client::writeComment(comment com, QString postId)
 {
-    QString result = QString("%1:%2:%3").arg("8").arg(cliInfo.MemberNickName).arg(com.contents);
+    QString result = QString("%1:%2:%3:%4").arg("8").arg(postId).arg(cliInfo.MemberNickName).arg(com.contents);
     setFlag(8);
     sendMessage(result);
 }
 
-void Client::modifyComment(Post_info post, comment com)
+void Client::modifyComment(Post_info* post, comment com)
 {
     QString result
         = QString("%1:%2:%3:%4")
               .arg("9")
-              .arg("nowPost->id")
+              .arg(post->id)
               .arg(com.idx)
               .arg(com.contents); // post.id가 아닌 client Post_info선언 후 전역으로 쓸것 + 댓글 idx struct 추가요구
     setFlag(9);
     sendMessage(result);
 }
 
-void Client::deleteComment(comment com)
+void Client::deleteComment(Post_info* post, comment com)
 {
-    QString result = QString("%1:%2:%3").arg("10").arg("a"/*nowPost->id*/).arg(com.idx);
+    QString result = QString("%1:%2:%3").arg("10").arg(post->id).arg(com.idx);
+    qDebug() << result;
     setFlag(10);
     sendMessage(result);
 }

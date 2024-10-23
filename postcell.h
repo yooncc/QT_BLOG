@@ -21,9 +21,11 @@ private:
     QLabel *profileLabel;
     QLabel *nickLabel;
     QLabel *likeLabel;
+    int row;
+    int col;
 
 public:
-    explicit PostCell(QWidget *parent = nullptr);
+    explicit PostCell(int row, int col, QWidget *parent = nullptr);
     void initPost(QString imageUrl = "",
                   QString title = "",
                   QString contents = "",
@@ -33,6 +35,16 @@ public:
                   QString nick = "",
                   QString like = "");
     QPushButton *buttonGesture;
+protected:
+    void enterEvent(QEnterEvent *event) override {
+        QWidget::enterEvent(event); // 기본 동작 호출
+        // qDebug() << "Mouse entered cell at row:" << row << "col:" << col;
+    }
+
+    void leaveEvent(QEvent *event) override {
+        QWidget::leaveEvent(event); // 기본 동작 호출
+        // qDebug() << "Mouse left cell at row:" << row << "col:" << col;
+    }
 public slots:
     // void cellClicked();
 signals:

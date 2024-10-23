@@ -1,8 +1,12 @@
 #include "postcell.h"
 
-PostCell::PostCell(QWidget *parent)
+PostCell::PostCell(int row, int col, QWidget *parent)
     : QWidget{parent}
 {
+    this->row = row; this->col = col;
+
+    setMouseTracking(true); // 마우스 이벤트를 추적하도록 설정
+
     int cellWidth = 260, cellHeight = 300, currentY = 0;
 
     QLabel *backgroundLabel = new QLabel(this);
@@ -118,4 +122,7 @@ void PostCell::initPost(QString imageUrl,
 
     this->nickLabel->setText(nick);
     // this->likeLabel->setText(like);
+
+
+
 }
