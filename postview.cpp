@@ -10,7 +10,7 @@ PostView::PostView(QWidget *parent)
     scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true); // 스크롤 영역이 동적으로 크기 조정 가능하게 설정
     scrollArea->setGeometry(
-        QRect(viewOriginX, 0, parent->width() - (viewOriginX * 2), screenHeight));
+        QRect(viewOriginX, 0, parent->width() - (viewOriginX * 2)+15, screenHeight));
     // scrollArea->setGeometry(QRect(0,0,parent->width(),screenHeight));
     scrollArea->setStyleSheet("background-color: lightgray;");
 
@@ -28,8 +28,87 @@ void PostView::backAct()
 void PostView::cmtAct()
 {
     qDebug("cmtAct");
+    if (commentEdit->toPlainText() == "") {
+        util.showErrorMsg(this,"댓글을 입력해주세요.");
+        return;
+    }
+    // commentRenew();
+    struct comment newComment;
+    newComment.idx = client.postInfos[index]->comments->size();
+    newComment.nick = client.cliInfo.MemberNickName;
+    newComment.contents = commentEdit->toPlainText();
+
+    client.writeComment(newComment, QString::number(this->postId));
+
+    client.postInfos[index]->comments->append(newComment);
+
+    scrollWidget->close();
+
+    postviewInit(client.postInfos[index]->title,
+                 client.postInfos[index]->nick,
+                 client.postInfos[index]->rtime,
+                 "image2",
+                 client.postInfos[index]->contents,
+                 client.postInfos[index]->id,
+                 index);
+
+}
+
+
+
+void PostView::delAct()
+{
+    qDebug("delAct");
+    client.deletePost(client.postInfos[index]);
     ((MainWindow *) (this->parent()))->initMain();
 }
+
+void PostView::modAct()
+{
+    qDebug("modAct");
+    ((MainWindow *) (this->parent()))->goToWrite(this->index);
+}
+
+void PostView::cmtModAct(int index, QString mContents) {
+    qDebug() << "cmtModAct";
+
+    struct comment newCmt;
+    newCmt.contents = mContents;
+    newCmt.idx = client.postInfos[this->index]->comments->at(index).idx;
+    newCmt.nick = client.postInfos[this->index]->comments->at(index).nick;
+
+    client.postInfos[this->index]->comments->replace(index, newCmt);  // 바로 덮어쓰기
+
+    client.modifyComment(client.postInfos[this->index],client.postInfos[this->index]->comments->at(index));
+
+    scrollWidget->close();
+
+    postviewInit(client.postInfos[this->index]->title,
+                 client.postInfos[this->index]->nick,
+                 client.postInfos[this->index]->rtime,
+                 "image2",
+                 client.postInfos[this->index]->contents,
+                 client.postInfos[this->index]->id,
+                 this->index);
+
+}
+
+void PostView::cmtDelAct(int index) {
+    qDebug() << "cmtDelAct";
+
+    client.postInfos[this->index]->comments->removeAt(index);
+
+    scrollWidget->close();
+
+    postviewInit(client.postInfos[this->index]->title,
+                 client.postInfos[this->index]->nick,
+                 client.postInfos[this->index]->rtime,
+                 "image2",
+                 client.postInfos[this->index]->contents,
+                 client.postInfos[this->index]->id,
+                 this->index);
+}
+
 
 // void PostView::Download()
 // {
@@ -39,11 +118,22 @@ void PostView::cmtAct()
 void PostView::postviewInit(
     QString title, QString nick, QString date, QString image, QString contents, int id, int index)
 {
-    this->postId = id;
-    scrollWidget = new QWidget;
-
     int offsetY = 100;
-    int width = scrollArea->width();
+    int width = scrollArea->width()-15;
+
+    if (nick == client.cliInfo.MemberNickName) {
+        modBtn = util.makePushButton(this, "modify", "", 8, false, "");
+        modBtn->setGeometry((QRect(scrollArea->x()+width+50, 50, 50, 50)));
+        connect(modBtn, SIGNAL(clicked()), this, SLOT(modAct()));
+
+        delBtn = util.makePushButton(this, "delete", "", 8, false, "");
+        delBtn->setGeometry((QRect(scrollArea->x()+width+50, 116, 50, 50)));
+        connect(delBtn, SIGNAL(clicked()), this, SLOT(delAct()));
+    }
+
+    this->postId = id;
+    this->index = index;
+    scrollWidget = new QWidget;
 
     titleLabel = new QLabel(scrollWidget);
     titleLabel->setText(title);
@@ -116,17 +206,22 @@ void PostView::postviewInit(
     offsetY += cmtBtn->height() + 16;
 
     QList<comment>* cmtArr = client.postInfos[index]->comments;
+    qDebug() << cmtArr->size();
     if (cmtArr->size() > 0) {
         for (int i = 0 ; i<cmtArr->size(); i++) {
+            qDebug() << cmtArr->at(i).nick;
             CommentCell* commentCell = new CommentCell(scrollWidget);
             commentCell->nickLabel->setFixedWidth(width-16);
             commentCell->contentsLabel->setFixedWidth(width-16);
             commentCell->setGeometry(QRect(0,offsetY,width,80));
-            commentCell->initComment(cmtArr->at(i).nick, cmtArr->at(i).contents);
+            commentCell->initComment(cmtArr->at(i), client.postInfos[index]);
+            connect(commentCell, &CommentCell::delSignal, this, &PostView::cmtDelAct);
+            connect(commentCell, &CommentCell::modSignal, this, &PostView::cmtModAct);
             offsetY += commentCell->height() + 16;
         }
     }
 
+    qDebug() << "test3";
     scrollWidget->setFixedHeight(offsetY);
     scrollArea->setWidget(scrollWidget);
 }

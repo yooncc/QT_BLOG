@@ -42,6 +42,7 @@ Post_info *JsonParsing::parsePost(const QByteArray &data)
                 struct comment cmt;
                 cmt.nick = commentNick;
                 cmt.contents = commentText;
+                cmt.idx = i;
                 postInfo->comments->append(cmt);
             }
         }

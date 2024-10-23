@@ -28,6 +28,8 @@ private:
 public:
     explicit WriteView(QWidget *parent = nullptr);
     Util util;
+    void setModify(QString title, QString contents);
+    int index;
 public slots:
     void backAct();
     void fileAct();

@@ -43,6 +43,14 @@ WriteView::WriteView(QWidget *parent)
     connect(imageBtn, SIGNAL(clicked()), this, SLOT(imageAct()));
 }
 
+void WriteView::setModify(QString title, QString contents)
+{
+    qDebug("setModify");
+    this->titleEdit->setText(title);
+    this->contentEdit->setText(contents);
+}
+
+
 void WriteView::backAct()
 {
     qDebug("backAct");
@@ -71,10 +79,18 @@ void WriteView::writeAct()
         util.showErrorMsg(this, "모든 항목을 채워주세요!");
         return;
     }
-    client.writePost(titleEdit->text(), contentEdit->toPlainText());
-    client.uploadFile(client.fn);
+    if (this->index == -1) {
+        client.writePost(titleEdit->text(), contentEdit->toPlainText());
+        client.uploadFile(client.fn);
 
-    ((MainWindow *) (this->parent()))->initMain();
+        ((MainWindow *) (this->parent()))->initMain();
+    }
+    else {
+        client.postInfos[index]->title = titleEdit->text();
+        client.postInfos[index]->contents = contentEdit->toPlainText();
+        client.modifyPost(client.postInfos[index]);
+        ((MainWindow *) (this->parent()))->goToPost(index,1);
+    }
 }
 
 void  WriteView::titleCheckTextLimit()

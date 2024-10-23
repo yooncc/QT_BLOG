@@ -30,11 +30,11 @@ public:
     void addMembership(QString id, QString name, QString nickName, QString pw);
     void postGet(QString postNum);
     void writePost(QString title, QString detail);
-    void modifyPost(Post_info post);
-    void deletePost(Post_info post);
-    void writeComment(comment com);
-    void modifyComment(Post_info post, comment com);
-    void deleteComment(comment com);
+    void modifyPost(Post_info *post);
+    void deletePost(Post_info *post);
+    void writeComment(comment com, QString postId);
+    void modifyComment(Post_info *post, comment com);
+    void deleteComment(Post_info* post, comment com);
     void subMembership(QString id, QString pw);
     void uploadFile(QString fileName);
     void downLoadFile(QString fileName);
