@@ -7,7 +7,11 @@
                     "text": "hello"
                 }
             ],
-            "id": 1,
+            "files": [
+                "test.txt",
+                "test2.txt"
+            ],
+            "id": 0,
             "nick": "sample",
             "text": "sample",
             "time": "2024. 10. 21. 13:40:58",
