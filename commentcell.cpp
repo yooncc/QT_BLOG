@@ -14,6 +14,7 @@ CommentCell::CommentCell(QWidget *parent)
     contentsLabel = new QTextEdit(this);
     contentsLabel->setStyleSheet("color: black; font-size: 12px; border: none;");
     contentsLabel->setGeometry(QRect(8,30,0,50));
+    contentsLabel->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QLabel* border2 = new QLabel(this);
     border2->setGeometry(QRect(0,79,1000,1));
