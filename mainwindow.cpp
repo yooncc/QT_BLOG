@@ -209,7 +209,7 @@ void MainWindow::initToolbar(int session)
 void MainWindow::initMain()
 {
     qDebug() << "initMain";
-
+    toolBar->setHidden(false);
     intro = new IntroView(this);
     setCentralWidget(intro);
     intro->initIntro();
@@ -226,7 +226,7 @@ void MainWindow::goToPost(int index, int flag)
     } else {
         writeView->close();
     }
-
+    toolBar->setHidden(true);
     postView = new PostView(this);
     postView->postviewInit(client.postInfos[index]->title,
                            client.postInfos[index]->nick,
@@ -244,7 +244,7 @@ void MainWindow::goToWrite(int index)
         util.showErrorMsg(this, "권한이 없습니다.");
         return;
     }
-
+    toolBar->setHidden(true);
     writeView = new WriteView(this);
     writeView->index = index;
     if (index != -1) {

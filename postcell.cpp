@@ -84,7 +84,7 @@ void PostCell::initPost(QString imageUrl,
                         QString nick,
                         QString like)
 {
-    this->imageLabel->setText(imageUrl);
+
     QPixmap pixmap(imageUrl);
     if (pixmap.isNull()) {
         pixmap = QPixmap(":/veda_w.png");

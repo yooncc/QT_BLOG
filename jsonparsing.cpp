@@ -23,11 +23,6 @@ Post_info *JsonParsing::parsePost(const QByteArray &data)
         QString rtime = jsonObj["time"].toString();
         QJsonArray commentsArray = jsonObj["comments"].toArray();
 
-        qDebug() << "ID:" << id;
-        qDebug() << "Nick:" << nick;
-        qDebug() << "Text:" << text;
-        qDebug() << "Title:" << title;
-
         Post_info *postInfo = new Post_info;
         // 5. "comments" 배열을 파싱
         if (jsonObj.contains("comments") && jsonObj["comments"].isArray()) {
@@ -37,8 +32,6 @@ Post_info *JsonParsing::parsePost(const QByteArray &data)
                 QString commentNick = commentObj["nick"].toString();
                 QString commentText = commentObj["text"].toString();
 
-                qDebug() << "Comment" << i << "Nick:" << commentNick;
-                qDebug() << "Comment" << i << "Text:" << commentText;
                 struct comment cmt;
                 cmt.nick = commentNick;
                 cmt.contents = commentText;
