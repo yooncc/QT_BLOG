@@ -166,7 +166,7 @@ void Client::uploadFile(QString fileName)
     sendMessage(result);
 
     char buf[1024] {};
-    QString input = fileName; // 전송할 파일 이름
+    QString input = fpath; // 전송할 파일 이름
     QFile file(input);
 
     file.open(QIODevice::ReadOnly);
@@ -192,9 +192,10 @@ int glo_flag = 0;
 //downLoadFile
 void Client::downLoadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("13").arg("35").arg("car.jpg");
+    QString result = QString("%1:%2:%3").arg("13").arg(client.postId).arg(fileName);
     setFlag(13);
     qDebug() << result;
+    client.fn = fileName;
     disconnect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
     connect(socket, &QTcpSocket::readyRead, this, &Client::onBlockingRead);
 
@@ -215,7 +216,7 @@ void Client::downLoadFile(QString fileName)
         socket->write(response);
         qDebug() << response << "\n";
     }
-
+    glo_flag = 0;
 
     qDebug() << "exit!\n";
 
@@ -235,8 +236,8 @@ void Client::onBlockingRead()
     }
     else
     {
-        qDebug() << "file: " << datas << "\n";
-        QFile file("_download___.jpg");
+        qDebug() << "file: " << client.fn << "\n";
+        QFile file(client.fn);
 
         file.open(QIODevice::WriteOnly | QIODevice::Append);
         file.write(data, data.length());

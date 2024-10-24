@@ -226,6 +226,7 @@ void MainWindow::goToPost(int index, int flag)
     } else {
         writeView->close();
     }
+    client.postId = index;
     toolBar->setHidden(true);
     postView = new PostView(this);
     postView->postviewInit(client.postInfos[index]->title,

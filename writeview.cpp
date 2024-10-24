@@ -63,6 +63,8 @@ void WriteView::fileAct()
     if (fileName.isEmpty())
         return;
     QFileInfo fileInfo(fileName);
+    QString fullPath = fileInfo.absoluteFilePath();
+    client.fpath = fullPath;
     client.fn = fileInfo.fileName();
 }
 

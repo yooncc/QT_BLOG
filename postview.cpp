@@ -119,8 +119,6 @@ void PostView::cmtModAct(int index) {
     QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
     dialog.exec();
 
-
-
 }
 
 void PostView::cmtDelAct(int index) {
@@ -142,25 +140,10 @@ void PostView::cmtDelAct(int index) {
 
 void PostView::downloadFile()
 {
+    QString selectName = comboBox->currentText();
+    qDebug() << "----fasdfasdfsdf" << selectName;
+    client.downLoadFile(selectName);
     QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    qDebug() << "Home Directory:" << homeDir;
-    QString saveFilePath = QFileDialog::getSaveFileName(this, "Save File", homeDir + "/untitled.txt", "Text Files (*.txt);;All Files (*.*)");
-    if (saveFilePath.isEmpty()) {
-        qDebug() << "No file selected for saving.";
-        return;  // 파일을 선택하지 않으면 함수 종료
-    }
-    QFile file(saveFilePath);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        // 파일에 저장할 내용 작성 (예: "Hello, World!")
-        out << "Hello, World! This is a test file.\n";
-        file.close();
-        // 저장 성공 알림
-        QMessageBox::information(this, "Success", "File saved successfully in your home directory!");
-    } else {
-        // 파일 열기 실패 시 에러 메시지
-        QMessageBox::warning(this, "Error", "Failed to open file for writing.");
-    }
 }
 
 void PostView::postviewInit(
@@ -185,10 +168,28 @@ void PostView::postviewInit(
     downloadBtn->setGeometry((QRect(scrollArea->x()+width+35,182,80,50)));
     connect(downloadBtn, SIGNAL(clicked()), this, SLOT(downloadFile()));
 
+
+
+    std::vector<QString> fileNames = client.postInfos[index]->fileNames;
+    if (!fileNames.empty())
+    {
+        QButtonGroup *buttonGroup = new QButtonGroup(this);
+        comboBox = new QComboBox(this);
+        comboBox->setGeometry(QRect(downloadBtn->x(), downloadBtn->y() + downloadBtn->height() + 8, 200, 30));
+        // 파일 이름을 콤보박스에 추가
+        for (const auto &fileName : fileNames) {
+
+            comboBox->addItem(fileName);
+        }
+        // comboBox->setCurrentIndex(0);
+    }
+
+    // 첫 번째 파일을 기본 선택 (기본적으로 첫 번째 항목이 선택됨)
+
+
     this->postId = id;
     this->index = index;
     scrollWidget = new QWidget;
-
     titleLabel = new QLabel(scrollWidget);
     titleLabel->setText(title);
     titleLabel->setWordWrap(true);

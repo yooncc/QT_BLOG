@@ -12,6 +12,7 @@ class Post_info : public QObject
     Q_OBJECT
 public:
     explicit Post_info(QObject *parent = nullptr);
+    std::vector<QString> fileNames;
     int id;
     QString nick;
     QString title;
@@ -19,7 +20,7 @@ public:
     QString rtime;
     QList<comment> *comments;
     bool commentExist;
-    void initPost(int id, QString nick, QString title, QString contents, QString rtime);
+    void initPost(std::vector<QString> fileNames, int id, QString nick, QString title, QString contents, QString rtime);
 
 signals:
 };

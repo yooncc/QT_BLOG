@@ -39,12 +39,11 @@ public:
     void uploadFile(QString fileName);
     void downLoadFile(QString fileName);
     void sendLogout();
-    void setNowPostInfo(int id);
-    Post_info *getNowPostInfo();
-    void setNowPostInfo();
     JsonParsing jsonParsing;
     QList<Post_info *> postInfos;
     QString fn;
+    QString fpath;
+    int postId;
 private slots:
     void onConnected();    // 서버에 연결되었을 때 호출
     void onReadyRead();    // 서버로부터데이터 수신 시 호출

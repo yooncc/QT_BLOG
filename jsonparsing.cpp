@@ -16,15 +16,21 @@ Post_info *JsonParsing::parsePost(const QByteArray &data)
         QJsonObject jsonObj = jsonDoc.object();
 
         // 4. 개별 필드 접근
+        QJsonArray filesArray = jsonObj["files"].toArray();
         int id = jsonObj["id"].toInt();
         QString nick = jsonObj["nick"].toString();
         QString text = jsonObj["text"].toString();
         QString title = jsonObj["title"].toString();
         QString rtime = jsonObj["time"].toString();
         QJsonArray commentsArray = jsonObj["comments"].toArray();
-
         Post_info *postInfo = new Post_info;
         // 5. "comments" 배열을 파싱
+        std::vector<QString> fileNames;
+        for (const QJsonValue &value : filesArray) {
+            fileNames.push_back(value.toString());
+        }
+
+
         if (jsonObj.contains("comments") && jsonObj["comments"].isArray()) {
             postInfo->comments = new QList<comment>;
             for (int i = 0; i < commentsArray.size(); ++i) {
@@ -39,7 +45,7 @@ Post_info *JsonParsing::parsePost(const QByteArray &data)
                 postInfo->comments->append(cmt);
             }
         }
-        postInfo->initPost(id, nick, title, text, rtime);
+        postInfo->initPost(fileNames,id, nick, title, text, rtime);
         return postInfo;
 
     } else {

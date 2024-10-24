@@ -7,6 +7,9 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QStandardPaths>
+#include <QButtonGroup>
+#include <QRadioButton>
+#include <QComboBox>
 #include "client.h"
 #include "util.h"
 #include "post_info.h"
@@ -21,11 +24,13 @@ private:
     QPushButton *delBtn;
     QPushButton *modBtn;
     QPushButton *downloadBtn;
+    QComboBox *comboBox;
     QLabel *titleLabel;
     QLabel *nickLabel;
     QLabel *dateLabel;
     QLabel *imageLabel;
     QLabel *contentsLabel;
+    QLabel *filesLabel;
     QWidget *scrollWidget;
     QTextEdit *commentEdit;
     QPushButton *cmtBtn;
