@@ -164,14 +164,84 @@ void Client::uploadFile(QString fileName)
     setFlag(12);
     qDebug() << result;
     sendMessage(result);
+
+    char buf[1024] {};
+    QString input = fileName; // 전송할 파일 이름
+    QFile file(input);
+
+    file.open(QIODevice::ReadOnly);
+    qint32 count = 0;
+
+    while (!file.atEnd()) {
+        qDebug() << count++ << "\n";
+        // qDebug() << "send\n";
+        QByteArray buffer = file.read(1024); // 1024 바이트 읽기
+
+        qDebug() << "length: " << buffer.length() << "\n";
+        socket->write(buffer); // 클라이언트에게 전송
+        socket->waitForReadyRead(5000); // 전송이 완료될 때까지 대기
+    }
+    qDebug() << count << "\n";
+    socket->write("exit");
+
+    file.close();
+
 }
 
+int glo_flag = 0;
+//downLoadFile
 void Client::downLoadFile(QString fileName)
 {
-    QString result = QString("%1:%2:%3").arg("13").arg("nowPost->id").arg(fileName);
+    QString result = QString("%1:%2:%3").arg("13").arg("35").arg("car.jpg");
     setFlag(13);
     qDebug() << result;
-    sendMessage(result);
+    disconnect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+    connect(socket, &QTcpSocket::readyRead, this, &Client::onBlockingRead);
+
+    socket->write(result.toUtf8());
+
+    while (1)
+    {
+        qDebug() << "ready\n";
+        socket->waitForReadyRead(5000); // 전송이 완료될 때까지 대기
+
+        if (glo_flag == 1)
+        {
+            qDebug() << "break\n";
+            break;
+        }
+
+        const char *response = "Message received";
+        socket->write(response);
+        qDebug() << response << "\n";
+    }
+
+
+    qDebug() << "exit!\n";
+
+    disconnect(socket, &QTcpSocket::readyRead, this, &Client::onBlockingRead);
+    connect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+}
+
+void Client::onBlockingRead()
+{
+    QByteArray data = socket->readAll();
+    QString datas = QString::fromUtf8(data);
+    qDebug() << datas;
+    if (datas == "exit")
+    {
+        qDebug() << "exit\n";
+        glo_flag = 1;
+    }
+    else
+    {
+        qDebug() << "file: " << datas << "\n";
+        QFile file("_download___.jpg");
+
+        file.open(QIODevice::WriteOnly | QIODevice::Append);
+        file.write(data, data.length());
+        file.close();
+    }
 }
 
 void Client::sendLogout()
@@ -326,7 +396,7 @@ void Client::onReadyRead()
         else if (parsedData[0] == "0") {
             qDebug() << "UPLoad error";
         } else if (parsedData[0] == "1") {
-            qDebug() << "UpLoads uccess";
+            qDebug() << "UpLoads success";
         }
         break;
     case 13: // fileDownload

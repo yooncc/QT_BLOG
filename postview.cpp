@@ -69,33 +69,63 @@ void PostView::modAct()
     ((MainWindow *) (this->parent()))->goToWrite(this->index);
 }
 
-void PostView::cmtModAct(int index, QString mContents) {
+void PostView::cmtModAct(int index) {
     qDebug() << "cmtModAct";
 
-    struct comment newCmt;
-    newCmt.contents = mContents;
-    newCmt.idx = client.postInfos[this->index]->comments->at(index).idx;
-    newCmt.nick = client.postInfos[this->index]->comments->at(index).nick;
+    QDialog dialog(this);
+    QFormLayout form(&dialog);
+    // Add some text above the fields
+    form.addRow(new QLabel("수정할 댓글을 입력해주세요."));
 
-    client.postInfos[this->index]->comments->replace(index, newCmt);  // 바로 덮어쓰기
+    // Add the lineEdits with their respective labels
+    QList<QLineEdit *> fields;
+    QLineEdit *contentsField = new QLineEdit(&dialog);
+    form.addRow("",contentsField);
+    fields << contentsField;
 
-    client.modifyComment(client.postInfos[this->index],client.postInfos[this->index]->comments->at(index));
+    // Add some standard buttons (Cancel/Ok) at the bottom of the dialog
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                               Qt::Horizontal,
+                               &dialog);
+    form.addRow(&buttonBox);
 
-    scrollWidget->close();
+    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+        QString mContents = contentsField->text();
+        if (mContents == "") {
+            util.showErrorMsg(this, "수정할 댓글을 입력하세요!");
+            return;
+        }
 
-    postviewInit(client.postInfos[this->index]->title,
-                 client.postInfos[this->index]->nick,
-                 client.postInfos[this->index]->rtime,
-                 "image2",
-                 client.postInfos[this->index]->contents,
-                 client.postInfos[this->index]->id,
-                 this->index);
+        struct comment newCmt;
+        newCmt.contents = mContents;
+        newCmt.idx = client.postInfos[this->index]->comments->at(index).idx;
+        newCmt.nick = client.postInfos[this->index]->comments->at(index).nick;
+
+        client.postInfos[this->index]->comments->replace(index, newCmt);  // 바로 덮어쓰기
+
+        client.modifyComment(client.postInfos[this->index],client.postInfos[this->index]->comments->at(index));
+
+        scrollWidget->close();
+
+        postviewInit(client.postInfos[this->index]->title,
+                     client.postInfos[this->index]->nick,
+                     client.postInfos[this->index]->rtime,
+                     "image2",
+                     client.postInfos[this->index]->contents,
+                     client.postInfos[this->index]->id,
+                     this->index);
+        dialog.accept();
+    });
+    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    dialog.exec();
+
+
 
 }
 
 void PostView::cmtDelAct(int index) {
     qDebug() << "cmtDelAct";
-
+    myint = 1;
     client.postInfos[this->index]->comments->removeAt(index);
 
     scrollWidget->close();
@@ -246,4 +276,5 @@ void PostView::postviewInit(
     scrollWidget->setFixedHeight(offsetY);
 
     scrollArea->setWidget(scrollWidget);
+
 }

@@ -32,7 +32,7 @@ public slots:
 
 signals:
     void delSignal(int index);  // 신호 선언
-    void modSignal(int index,QString mContents);  // 신호 선언
+    void modSignal(int index);  // 신호 선언
 };
 
 #endif // COMMENTCELL_H

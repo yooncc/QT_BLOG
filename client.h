@@ -50,6 +50,7 @@ private slots:
     void onReadyRead();    // 서버로부터데이터 수신 시 호출
     void onDisconnected(); // 서버와 연결이 끊겼을 때 호출
     void onErrorOccurred(QAbstractSocket::SocketError socketError); // 에러 발생 시 호출
+    void onBlockingRead();
 signals:
     void allPostgetFinished();
 
