@@ -27,20 +27,21 @@ void CommentCell::initComment(comment cmt, Post_info* post) {
     this->curCmt = cmt;
     this->curPost = post;
 
-    if (cmt.nick == client.cliInfo.MemberNickName) {
-        modBtn = util.makePushButton(this, "수정", "", 8, false, "");
-        modBtn->setGeometry((QRect(this->width()-(8+64), 4, 30, 20)));
-        connect(modBtn, SIGNAL(clicked()), this, SLOT(modAct()));
+    if (cmt.nick == client.cliInfo.MemberNickName || client.cliInfo.rank > 1) {
+        if (cmt.nick == client.cliInfo.MemberNickName) {
+            modBtn = util.makePushButton(this, "수정", "", 8, false, "");
+            modBtn->setGeometry((QRect(this->width()-(8+64), 4, 30, 20)));
+            connect(modBtn, SIGNAL(clicked()), this, SLOT(modAct()));
+        }
 
         delBtn = util.makePushButton(this, "삭제", "", 8, false, "");
-        delBtn->setGeometry((QRect(modBtn->x()+modBtn->width()+4, 4, 30, 20)));
+        delBtn->setGeometry((QRect(this->width()-(8+64)+30+4, 4, 30, 20)));
         connect(delBtn, SIGNAL(clicked()), this, SLOT(delAct()));
 
     }
 }
 
 void CommentCell::modAct() {
-    qDebug() << "mod1";
     QDialog dialog(this);
     QFormLayout form(&dialog);
     // Add some text above the fields
@@ -65,10 +66,10 @@ void CommentCell::modAct() {
             util.showErrorMsg(this, "수정할 댓글을 입력하세요!");
             return;
         }
-
         emit modSignal(this->curCmt.idx, contents);  // 신호 발생
     });
     QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    qDebug() << "test4";
     dialog.exec();
     // client.modifyComment(this->curPost,this->curCmt);
 }

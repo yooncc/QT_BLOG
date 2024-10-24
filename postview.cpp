@@ -110,10 +110,28 @@ void PostView::cmtDelAct(int index) {
 }
 
 
-// void PostView::Download()
-// {
-//     client.downLoadFile();
-// }
+void PostView::downloadFile()
+{
+    QString homeDir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    qDebug() << "Home Directory:" << homeDir;
+    QString saveFilePath = QFileDialog::getSaveFileName(this, "Save File", homeDir + "/untitled.txt", "Text Files (*.txt);;All Files (*.*)");
+    if (saveFilePath.isEmpty()) {
+        qDebug() << "No file selected for saving.";
+        return;  // 파일을 선택하지 않으면 함수 종료
+    }
+    QFile file(saveFilePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        // 파일에 저장할 내용 작성 (예: "Hello, World!")
+        out << "Hello, World! This is a test file.\n";
+        file.close();
+        // 저장 성공 알림
+        QMessageBox::information(this, "Success", "File saved successfully in your home directory!");
+    } else {
+        // 파일 열기 실패 시 에러 메시지
+        QMessageBox::warning(this, "Error", "Failed to open file for writing.");
+    }
+}
 
 void PostView::postviewInit(
     QString title, QString nick, QString date, QString image, QString contents, int id, int index)
@@ -121,15 +139,21 @@ void PostView::postviewInit(
     int offsetY = 100;
     int width = scrollArea->width()-15;
 
-    if (nick == client.cliInfo.MemberNickName) {
-        modBtn = util.makePushButton(this, "modify", "", 8, false, "");
-        modBtn->setGeometry((QRect(scrollArea->x()+width+50, 50, 50, 50)));
-        connect(modBtn, SIGNAL(clicked()), this, SLOT(modAct()));
-
+    if (nick == client.cliInfo.MemberNickName || client.cliInfo.rank > 1) {
+        if (nick == client.cliInfo.MemberNickName) {
+            modBtn = util.makePushButton(this, "modify", "", 8, false, "");
+            modBtn->setGeometry((QRect(scrollArea->x()+width+50, 50, 50, 50)));
+            connect(modBtn, SIGNAL(clicked()), this, SLOT(modAct()));
+        }
         delBtn = util.makePushButton(this, "delete", "", 8, false, "");
         delBtn->setGeometry((QRect(scrollArea->x()+width+50, 116, 50, 50)));
         connect(delBtn, SIGNAL(clicked()), this, SLOT(delAct()));
     }
+
+    // 다운로드 버튼
+    downloadBtn = util.makePushButton(this, "다운로드", "",11, false, "");
+    downloadBtn->setGeometry((QRect(scrollArea->x()+width+35,182,80,50)));
+    connect(downloadBtn, SIGNAL(clicked()), this, SLOT(downloadFile()));
 
     this->postId = id;
     this->index = index;
@@ -156,10 +180,7 @@ void PostView::postviewInit(
     // nickLabel->setGeometry(QRect(8,offsetY,width/2-8,20));
     nickLabel->setGeometry(QRect(8, offsetY, nickLabel->width(), nickLabel->height()));
 
-    // 다운로드 버튼
-    // downLoadBtn = util.makePushButton(scrollWidget, "다운로드", 11, false, "");
-    // downLoadBtn->setGeometry((QRect(8,offsetY+4,50,20));
-    // connect(cmtBtn, SIGNAL(clicked()), this, SLOT(Download()));
+
 
     dateLabel = new QLabel(scrollWidget);
     dateLabel->setText(date);
@@ -173,9 +194,12 @@ void PostView::postviewInit(
     offsetY += nickLabel->height() + 8;
 
     imageLabel = new QLabel(scrollWidget);
-    imageLabel->setText(image);
     imageLabel->setGeometry(QRect(8, offsetY, width - 16, 200));
-    imageLabel->setStyleSheet("background-color: yellow;");
+    QPixmap pixmap(image);
+    if (pixmap.isNull()) {
+        pixmap = QPixmap(":/veda_w.png");
+    }
+    imageLabel->setPixmap(pixmap.scaled(imageLabel->size(), Qt::KeepAspectRatioByExpanding));
 
     offsetY += imageLabel->height() + 16;
 
@@ -206,10 +230,8 @@ void PostView::postviewInit(
     offsetY += cmtBtn->height() + 16;
 
     QList<comment>* cmtArr = client.postInfos[index]->comments;
-    qDebug() << cmtArr->size();
     if (cmtArr->size() > 0) {
         for (int i = 0 ; i<cmtArr->size(); i++) {
-            qDebug() << cmtArr->at(i).nick;
             CommentCell* commentCell = new CommentCell(scrollWidget);
             commentCell->nickLabel->setFixedWidth(width-16);
             commentCell->contentsLabel->setFixedWidth(width-16);
@@ -221,7 +243,7 @@ void PostView::postviewInit(
         }
     }
 
-    qDebug() << "test3";
     scrollWidget->setFixedHeight(offsetY);
+
     scrollArea->setWidget(scrollWidget);
 }

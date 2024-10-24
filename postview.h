@@ -6,6 +6,7 @@
 #include <QTextEdit>
 #include <QWidget>
 #include <QGridLayout>
+#include <QStandardPaths>
 #include "client.h"
 #include "util.h"
 #include "post_info.h"
@@ -19,6 +20,7 @@ private:
     QPushButton *backBtn;
     QPushButton *delBtn;
     QPushButton *modBtn;
+    QPushButton *downloadBtn;
     QLabel *titleLabel;
     QLabel *nickLabel;
     QLabel *dateLabel;
@@ -46,7 +48,7 @@ public slots:
     void delAct();
     void cmtModAct(int index, QString mContents);
     void cmtDelAct(int index);
-    // void Download();
+    void downloadFile();
 signals:
 };
 
