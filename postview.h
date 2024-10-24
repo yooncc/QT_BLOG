@@ -33,6 +33,7 @@ private:
     int postId;
     int viewOriginX;
     int index;
+    int myint;
 
 public:
     explicit PostView(QWidget *parent = nullptr);
@@ -46,7 +47,7 @@ public slots:
     void cmtAct();
     void modAct();
     void delAct();
-    void cmtModAct(int index, QString mContents);
+    void cmtModAct(int index);
     void cmtDelAct(int index);
     void downloadFile();
 signals:

@@ -42,36 +42,39 @@ void CommentCell::initComment(comment cmt, Post_info* post) {
 }
 
 void CommentCell::modAct() {
-    QDialog dialog(this);
-    QFormLayout form(&dialog);
-    // Add some text above the fields
-    form.addRow(new QLabel("수정할 댓글을 입력해주세요."));
+    emit modSignal(this->curCmt.idx);  // 신호 발생
+    // QDialog dialog(this);
+    // QFormLayout form(&dialog);
+    // // Add some text above the fields
+    // form.addRow(new QLabel("수정할 댓글을 입력해주세요."));
 
-    // Add the lineEdits with their respective labels
-    QList<QLineEdit *> fields;
-    QLineEdit *contentsField = new QLineEdit(&dialog);
-    form.addRow("",contentsField);
-    fields << contentsField;
+    // // Add the lineEdits with their respective labels
+    // QList<QLineEdit *> fields;
+    // QLineEdit *contentsField = new QLineEdit(&dialog);
+    // form.addRow("",contentsField);
+    // fields << contentsField;
 
-    // Add some standard buttons (Cancel/Ok) at the bottom of the dialog
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal,
-                               &dialog);
-    form.addRow(&buttonBox);
+    // // Add some standard buttons (Cancel/Ok) at the bottom of the dialog
+    // QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+    //                            Qt::Horizontal,
+    //                            &dialog);
+    // form.addRow(&buttonBox);
 
-    QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
-        QString contents = contentsField->text(); // 여기에 실제 id 값을 넣으세요
-
-        if (contents == "") {
-            util.showErrorMsg(this, "수정할 댓글을 입력하세요!");
-            return;
-        }
-        emit modSignal(this->curCmt.idx, contents);  // 신호 발생
-    });
-    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-    qDebug() << "test4";
-    dialog.exec();
-    // client.modifyComment(this->curPost,this->curCmt);
+    // int flag = 0;
+    // QString contents;
+    // QObject::connect(&buttonBox, &QDialogButtonBox::accepted, [&]() {
+    //     contents = contentsField->text();
+    //     if (contents == "") {
+    //         util.showErrorMsg(this, "수정할 댓글을 입력하세요!");
+    //         return;
+    //     }
+    //     flag = 1;
+    // });
+    // QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    // dialog.exec();
+    // if (flag == 1) {
+    //     emit modSignal(this->curCmt.idx, contents);  // 신호 발생
+    // }
 }
 
 void CommentCell::delAct() {
