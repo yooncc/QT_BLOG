@@ -20,7 +20,12 @@ public:
     QString rtime;
     QList<comment> *comments;
     bool commentExist;
-    void initPost(std::vector<QString> fileNames, int id, QString nick, QString title, QString contents, QString rtime);
+    void initPost(std::vector<QString> fileNames,
+                  int id,
+                  QString nick,
+                  QString title,
+                  QString contents,
+                  QString rtime);
 
 signals:
 };

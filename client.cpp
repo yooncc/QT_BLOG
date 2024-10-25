@@ -109,10 +109,9 @@ void Client::writePost(QString title, QString detail)
 
 void Client::modifyPost(Post_info *post)
 {
-    QString result = QString("%1:%2:%3:%4").arg("6").arg(post->id).arg(post->title).arg(post->contents);
-    qDebug() << result;
+    QString result
+        = QString("%1:%2:%3:%4").arg("6").arg(post->id).arg(post->title).arg(post->contents);
     setFlag(6);
-    sendMessage(result);
 }
 
 void Client::deletePost(Post_info *post)
@@ -125,12 +124,13 @@ void Client::deletePost(Post_info *post)
 
 void Client::writeComment(comment com, QString postId)
 {
-    QString result = QString("%1:%2:%3:%4").arg("8").arg(postId).arg(cliInfo.MemberNickName).arg(com.contents);
+    QString result
+        = QString("%1:%2:%3:%4").arg("8").arg(postId).arg(cliInfo.MemberNickName).arg(com.contents);
     setFlag(8);
     sendMessage(result);
 }
 
-void Client::modifyComment(Post_info* post, comment com)
+void Client::modifyComment(Post_info *post, comment com)
 {
     QString result
         = QString("%1:%2:%3:%4")
@@ -142,10 +142,9 @@ void Client::modifyComment(Post_info* post, comment com)
     sendMessage(result);
 }
 
-void Client::deleteComment(Post_info* post, comment com)
+void Client::deleteComment(Post_info *post, comment com)
 {
     QString result = QString("%1:%2:%3").arg("10").arg(post->id).arg(com.idx);
-    qDebug() << result;
     setFlag(10);
     sendMessage(result);
 }
@@ -154,7 +153,6 @@ void Client::subMembership(QString id, QString pw)
 {
     QString result = QString("%1:%2:%3").arg("11").arg(id).arg(pw);
     setFlag(11);
-    qDebug() << result;
     sendMessage(result);
 }
 
@@ -162,10 +160,9 @@ void Client::uploadFile(QString fileName)
 {
     QString result = QString("%1:%2:%3").arg("12").arg(client.postInfos.size()).arg(fileName);
     setFlag(12);
-    qDebug() << result;
     sendMessage(result);
 
-    char buf[1024] {};
+    char buf[1024]{};
     QString input = fpath; // 전송할 파일 이름
     QFile file(input);
 
@@ -173,19 +170,14 @@ void Client::uploadFile(QString fileName)
     qint32 count = 0;
 
     while (!file.atEnd()) {
-        qDebug() << count++ << "\n";
-        // qDebug() << "send\n";
         QByteArray buffer = file.read(1024); // 1024 바이트 읽기
 
-        qDebug() << "length: " << buffer.length() << "\n";
-        socket->write(buffer); // 클라이언트에게 전송
+        socket->write(buffer);          // 클라이언트에게 전송
         socket->waitForReadyRead(5000); // 전송이 완료될 때까지 대기
     }
-    qDebug() << count << "\n";
     socket->write("exit");
 
     file.close();
-
 }
 
 int glo_flag = 0;
@@ -194,27 +186,22 @@ void Client::downLoadFile(QString fileName)
 {
     QString result = QString("%1:%2:%3").arg("13").arg(client.postId).arg(fileName);
     setFlag(13);
-    qDebug() << result;
     client.fn = fileName;
     disconnect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
     connect(socket, &QTcpSocket::readyRead, this, &Client::onBlockingRead);
 
     socket->write(result.toUtf8());
 
-    while (1)
-    {
-        qDebug() << "ready\n";
+    while (1) {
         socket->waitForReadyRead(5000); // 전송이 완료될 때까지 대기
 
-        if (glo_flag == 1)
-        {
+        if (glo_flag == 1) {
             qDebug() << "break\n";
             break;
         }
 
         const char *response = "Message received";
         socket->write(response);
-        qDebug() << response << "\n";
     }
     glo_flag = 0;
 
@@ -228,15 +215,11 @@ void Client::onBlockingRead()
 {
     QByteArray data = socket->readAll();
     QString datas = QString::fromUtf8(data);
-    qDebug() << datas;
-    if (datas == "exit")
-    {
-        qDebug() << "exit\n";
+    if (datas == "exit") {
+        qDebug() << "exit";
         glo_flag = 1;
-    }
-    else
-    {
-        qDebug() << "file: " << client.fn << "\n";
+    } else {
+        qDebug() << "file: " << client.fn;
         QFile file(client.fn);
 
         file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -247,19 +230,15 @@ void Client::onBlockingRead()
 
 void Client::sendLogout()
 {
-    if (cliInfo.rank == 0)
-    {
+    if (cliInfo.rank == 0) {
         QString err = "-1";
         setFlag(14);
         sendMessage(err);
         return;
-    }
-    else
-    {
+    } else {
         QString result = QString("%1:%2:%3").arg("14").arg(cliInfo.MemberId).arg(cliInfo.MemberPw);
         client.cliInfo = {"", "", "", "", 0};
         setFlag(14);
-        qDebug() << result;
         sendMessage(result);
     }
 }
@@ -269,8 +248,6 @@ void Client::onReadyRead()
     // 서버로부터 데이터가 수신되었을 때 호출됨
     QByteArray data = socket->readAll();
     QString datas = QString::fromUtf8(data);
-    qDebug() << "test";
-    qDebug() << datas;
     QStringList parsedData = datas.split('\n'); // QString datats[]
     bool ok = true;
     switch (flag) {
@@ -329,8 +306,7 @@ void Client::onReadyRead()
     case 5: // WritePost
         if (parsedData[0] == "0") {
             qDebug() << "WritePost error";
-        }
-        else{
+        } else {
             qDebug() << "WritePost OK";
         }
         break;
@@ -386,14 +362,11 @@ void Client::onReadyRead()
         }
         break;
     case 12: // fileUpload
-        qDebug() << "received Message~~~~~~~~~~~~~~~~~~~~";
-        qDebug() << datas;
-        if(parsedData[0] == "start"){
+        if (parsedData[0] == "start") {
             qDebug() << "Start";
             QByteArray data = socket->readAll();
             qDebug() << data;
-        }
-        else if (parsedData[0] == "0") {
+        } else if (parsedData[0] == "0") {
             qDebug() << "UPLoad error";
         } else if (parsedData[0] == "1") {
             qDebug() << "UpLoads success";

@@ -3,7 +3,8 @@
 PostCell::PostCell(int row, int col, QWidget *parent)
     : QWidget{parent}
 {
-    this->row = row; this->col = col;
+    this->row = row;
+    this->col = col;
 
     // setMouseTracking(true); // 마우스 이벤트를 추적하도록 설정
 
@@ -26,7 +27,7 @@ PostCell::PostCell(int row, int col, QWidget *parent)
 
     currentY += imageLabel->height();
 
-    titleLabel->setGeometry(QRect(8, currentY, cellWidth-16, cellHeight * 0.1));
+    titleLabel->setGeometry(QRect(8, currentY, cellWidth - 16, cellHeight * 0.1));
     titleLabel->setStyleSheet("color: black; font-weight: bold; font-size: 16px;");
     titleLabel->setAlignment(Qt::AlignLeft); // 텍스트 가운데 정렬
     currentY += titleLabel->height();
@@ -42,10 +43,9 @@ PostCell::PostCell(int row, int col, QWidget *parent)
     border1->setGeometry(QRect(0, currentY, cellWidth, 1));
     border1->setStyleSheet("background-color: lightgray;");
 
-    dateLabel->setGeometry(QRect(8, currentY, cellWidth / 2 , cellHeight * 0.1));
+    dateLabel->setGeometry(QRect(8, currentY, cellWidth / 2, cellHeight * 0.1));
     dateLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    commentLabel->setGeometry(
-        QRect(cellWidth / 2, currentY, cellWidth / 2 - 8, cellHeight * 0.1));
+    commentLabel->setGeometry(QRect(cellWidth / 2, currentY, cellWidth / 2 - 8, cellHeight * 0.1));
     commentLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     currentY += dateLabel->height();
@@ -54,7 +54,8 @@ PostCell::PostCell(int row, int col, QWidget *parent)
     border2->setGeometry(QRect(0, currentY, cellWidth, 1));
     border2->setStyleSheet("background-color: lightgray;");
 
-    profileLabel->setGeometry(QRect(8, currentY+cellHeight * 0.025, cellHeight * 0.1, cellHeight * 0.1));
+    profileLabel->setGeometry(
+        QRect(8, currentY + cellHeight * 0.025, cellHeight * 0.1, cellHeight * 0.1));
     // profileLabel->setStyleSheet("border: 1px solid black;");
 
     nickLabel->setGeometry(QRect(profileLabel->x() + profileLabel->width() + 4,
@@ -84,18 +85,16 @@ void PostCell::initPost(QString imageUrl,
                         QString nick,
                         QString like)
 {
-
     QPixmap pixmap(imageUrl);
     if (pixmap.isNull()) {
         pixmap = QPixmap(":/veda_w.png");
         imageLabel->setPixmap(pixmap.scaled(imageLabel->size(), Qt::KeepAspectRatioByExpanding));
-    }
-    else {
+    } else {
         imageLabel->setPixmap(pixmap.scaled(imageLabel->size(), Qt::KeepAspectRatioByExpanding));
         // imageLabel->setFixedSize(pixmap.size());
         QPainterPath path;
         QRectF rect = imageLabel->rect();
-        path.addRoundedRect(rect, 11, 11);  // 전체 라운드 처리
+        path.addRoundedRect(rect, 11, 11);                     // 전체 라운드 처리
         path.addRect(0, 11, rect.width(), rect.height() - 11); // 아래쪽은 평평하게
 
         // // 마스크 설정 (위젯의 클리핑 경계를 설정)
@@ -122,7 +121,4 @@ void PostCell::initPost(QString imageUrl,
 
     this->nickLabel->setText(nick);
     // this->likeLabel->setText(like);
-
-
-
 }

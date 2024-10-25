@@ -37,7 +37,7 @@ public:
     ~MainWindow();
     void initMain();
     void goToPost(int index, int flag); // flag 0 인트로에서 이동 / 1 편집 완료
-    void goToWrite(int index);  // index -1 글쓰기 / 그 외 게시글편집
+    void goToWrite(int index);          // index -1 글쓰기 / 그 외 게시글편집
     Util util;
     PostView *postView;
     WriteView *writeView;

@@ -79,7 +79,7 @@ void IntroView::setPost()
         n = i % 4;
         if (i % 4 == 0)
             m++;
-        PostCell *postCell = new PostCell(m,n);
+        PostCell *postCell = new PostCell(m, n);
         postCell->setFixedSize(260, 300);
 
         // connect(postCell->buttonGesture, SIGNAL(clicked()), this, SLOT(cellClicked()));

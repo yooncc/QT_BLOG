@@ -33,7 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     initToolbar(0);
 }
 
-MainWindow::~MainWindow() {
+MainWindow::~MainWindow()
+{
     client.sendLogout();
 }
 
@@ -191,8 +192,6 @@ void MainWindow::startExit()
 void MainWindow::initToolbar(int session)
 {
     toolBar->clear();
-    qDebug() << client.cliInfo.MemberId;
-
     if (session == 1) {
         toolBar->addAction(logoutAct);
         toolBar->addSeparator();
@@ -221,7 +220,7 @@ void MainWindow::goToPost(int index, int flag)
         util.showErrorMsg(this, "권한이 없습니다.");
         return;
     }
-    if (flag==0) {
+    if (flag == 0) {
         intro->close();
     } else {
         writeView->close();
@@ -249,10 +248,9 @@ void MainWindow::goToWrite(int index)
     writeView = new WriteView(this);
     writeView->index = index;
     if (index != -1) {
-        writeView->setModify(client.postInfos[index]->title,client.postInfos[index]->contents);
+        writeView->setModify(client.postInfos[index]->title, client.postInfos[index]->contents);
         postView->close();
-    }
-    else {
+    } else {
         intro->close();
     }
     // postView->postviewInit(client.postInfos[index]->title,client.postInfos[index]->nick,"2024/10/17","image2",client.postInfos[index]->contents,client.postInfos[index]->id);
