@@ -283,7 +283,7 @@ void Client::onReadyRead()
         } else {
             postTable = std::move(parsedData);
             postInfos.clear();
-            for (int i = 0; i < postTable.size(); i++) {
+            for (int i = postTable.size()-1; i >=0; i--) {
                 QByteArray postData = postTable[i].toUtf8();
                 if (postData.isEmpty())
                     continue;

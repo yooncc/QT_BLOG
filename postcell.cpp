@@ -6,7 +6,7 @@ PostCell::PostCell(int row, int col, QWidget *parent)
     this->row = row;
     this->col = col;
 
-    setMouseTracking(true); // 마우스 이벤트를 추적하도록 설정
+    // setMouseTracking(true); // 마우스 이벤트를 추적하도록 설정
 
     int cellWidth = 260, cellHeight = 300, currentY = 0;
 
@@ -60,7 +60,7 @@ PostCell::PostCell(int row, int col, QWidget *parent)
 
     nickLabel->setGeometry(QRect(profileLabel->x() + profileLabel->width() + 4,
                                  currentY,
-                                 cellWidth / 3,
+                                 cellWidth -(profileLabel->x() + profileLabel->width() + 4+8),
                                  cellHeight * 0.15));
     nickLabel->setStyleSheet("color: black; font-weight: bold; font-size: 13px;");
 
