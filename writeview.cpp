@@ -83,8 +83,10 @@ void WriteView::writeAct()
     }
     if (this->index == -1) {
         client.writePost(titleEdit->text(), contentEdit->toPlainText());
-        client.uploadFile(client.fn);
-
+        if(!client.fn.isEmpty())
+        {
+            client.uploadFile(client.fn);
+        }
         // ((MainWindow *) (this->parent()))->initMain();
     } else {
         client.postInfos[index]->title = titleEdit->text();

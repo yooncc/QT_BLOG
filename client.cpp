@@ -159,6 +159,8 @@ void Client::subMembership(QString id, QString pw)
 void Client::uploadFile(QString fileName)
 {
     QString result = QString("%1:%2:%3").arg("12").arg(client.postId).arg(fileName);
+    qDebug() << result;
+
     setFlag(12);
     sendMessage(result);
 
@@ -307,8 +309,9 @@ void Client::onReadyRead()
         if (parsedData[0] == "0") {
             qDebug() << "WritePost error";
         } else {
-            qDebug() << "WritePost OK";
-
+            postId = parsedData[0].toInt();
+            qDebug() << "--------------------";
+            qDebug() << postId;
         }
         break;
 
