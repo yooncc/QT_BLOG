@@ -147,6 +147,8 @@ void MainWindow::startSign()
             util.showErrorMsg(this, "잘못된 아이디 입니다.");
         } else if (client.chkError() == -2) {
             util.showErrorMsg(this, "잘못된 비밀번호 입니다.");
+        } else if (client.chkError() == -3) {
+            util.showErrorMsg(this, "이미 로그인 중인 회원입니다.");
         } else {
             util.showErrorMsg(this, "회원탈퇴에 성공하였습니다.");
             dialog.accept();
@@ -225,7 +227,7 @@ void MainWindow::goToPost(int index, int flag)
     } else {
         writeView->close();
     }
-    client.postId = index;
+    client.postId = client.postInfos[index]->id;
     toolBar->setHidden(true);
     postView = new PostView(this);
     postView->postviewInit(client.postInfos[index]->title,
