@@ -2,12 +2,12 @@
 #define CLIENT_H
 
 #include <QEventLoop>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QObject>
 #include <QString>
 #include <QTcpSocket>
 #include <QTimer>
-#include <QFileDialog>
-#include <QFileInfo>
 #include "comment.h"
 #include "introview.h"
 #include "jsonparsing.h"
@@ -34,7 +34,7 @@ public:
     void deletePost(Post_info *post);
     void writeComment(comment com, QString postId);
     void modifyComment(Post_info *post, comment com);
-    void deleteComment(Post_info* post, comment com);
+    void deleteComment(Post_info *post, comment com);
     void subMembership(QString id, QString pw);
     void uploadFile(QString fileName);
     void downLoadFile(QString fileName);
@@ -60,7 +60,6 @@ private:
     QString post;
     QTcpSocket *socket; // TCP 소켓 객체
     int status;
-
 };
 
 extern Client client;

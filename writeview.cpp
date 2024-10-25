@@ -35,11 +35,11 @@ WriteView::WriteView(QWidget *parent)
     connect(backBtn, SIGNAL(clicked()), this, SLOT(backAct()));
 
     fileBtn = util.makePushButton(this, "file", "", 8, false, "");
-    fileBtn->setGeometry((QRect(writePlace->x()+writePlace->width()+50, 50, 50, 50)));
+    fileBtn->setGeometry((QRect(writePlace->x() + writePlace->width() + 50, 50, 50, 50)));
     connect(fileBtn, SIGNAL(clicked()), this, SLOT(fileAct()));
 
     imageBtn = util.makePushButton(this, "image", "", 8, false, "");
-    imageBtn->setGeometry((QRect(writePlace->x()+writePlace->width()+50, 116, 50, 50)));
+    imageBtn->setGeometry((QRect(writePlace->x() + writePlace->width() + 50, 116, 50, 50)));
     connect(imageBtn, SIGNAL(clicked()), this, SLOT(imageAct()));
 }
 
@@ -50,7 +50,6 @@ void WriteView::setModify(QString title, QString contents)
     this->contentEdit->setText(contents);
 }
 
-
 void WriteView::backAct()
 {
     qDebug("backAct");
@@ -59,7 +58,8 @@ void WriteView::backAct()
 
 void WriteView::fileAct()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("All Files (*);;Text Files (*.txt);;Images (*.png *.jpg)"));
+    QString fileName = QFileDialog::getOpenFileName(
+        this, tr("Open File"), "", tr("All Files (*);;Text Files (*.txt);;Images (*.png *.jpg)"));
     if (fileName.isEmpty())
         return;
     QFileInfo fileInfo(fileName);
@@ -86,16 +86,15 @@ void WriteView::writeAct()
         client.uploadFile(client.fn);
 
         // ((MainWindow *) (this->parent()))->initMain();
-    }
-    else {
+    } else {
         client.postInfos[index]->title = titleEdit->text();
         client.postInfos[index]->contents = contentEdit->toPlainText();
         client.modifyPost(client.postInfos[index]);
-        ((MainWindow *) (this->parent()))->goToPost(index,1);
+        ((MainWindow *) (this->parent()))->goToPost(index, 1);
     }
 }
 
-void  WriteView::titleCheckTextLimit()
+void WriteView::titleCheckTextLimit()
 {
     QString currentText = titleEdit->text();
 
@@ -106,7 +105,7 @@ void  WriteView::titleCheckTextLimit()
     }
 }
 
-void  WriteView::contentsCheckTextLimit()
+void WriteView::contentsCheckTextLimit()
 {
     QString currentText = contentEdit->toPlainText();
 

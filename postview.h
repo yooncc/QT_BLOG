@@ -1,19 +1,19 @@
 #ifndef POSTVIEW_H
 #define POSTVIEW_H
 
+#include <QButtonGroup>
+#include <QComboBox>
+#include <QGridLayout>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QScrollArea>
+#include <QStandardPaths>
 #include <QTextEdit>
 #include <QWidget>
-#include <QGridLayout>
-#include <QStandardPaths>
-#include <QButtonGroup>
-#include <QRadioButton>
-#include <QComboBox>
 #include "client.h"
-#include "util.h"
-#include "post_info.h"
 #include "commentcell.h"
+#include "post_info.h"
+#include "util.h"
 
 class PostView : public QWidget
 {
@@ -42,8 +42,13 @@ private:
 
 public:
     explicit PostView(QWidget *parent = nullptr);
-    void postviewInit(
-        QString title, QString nick, QString date, QString image, QString contents, int id, int index);
+    void postviewInit(QString title,
+                      QString nick,
+                      QString date,
+                      QString image,
+                      QString contents,
+                      int id,
+                      int index);
     void commentRenew();
     Util util;
 
